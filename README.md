@@ -46,6 +46,16 @@ After polishing, run the post-polishing review against the style guide.
 
 For full papers or major sections, the skill will use `references/polish_integrated.md` as the detailed style and workflow guide.
 
+## Recommended Workflow
+
+For submission-oriented polishing, use the skill with a full-paper view and a section-level editing process:
+
+1. First provide the full manuscript and ask Codex to identify the core problem, terminology map, main storyline, and section-level issues.
+2. Then polish the manuscript section by section while preserving consistency with the full-paper diagnosis.
+3. Finally run a full-paper review to check TeX preservation, terminology consistency, problem-driven structure, claim boundaries, and output completeness.
+
+Avoid polishing isolated paragraphs without manuscript context when consistency matters. For short papers or quick drafts, a single full-paper polishing pass can be acceptable, but the final review should still be performed.
+
 ## License
 
 This project is released under the MIT License.
