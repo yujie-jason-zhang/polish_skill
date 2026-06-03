@@ -60,9 +60,9 @@ The installed skill should be located at:
 
 For a project-specific Claude Code install, copy `paper-polisher` into `.claude/skills/` inside the target project.
 
-### Claude.ai
+### Web AI Platforms
 
-Claude.ai uses uploaded skill ZIP files rather than a local skills directory. Package the skill folder:
+Web AI platforms that support uploaded skills, project files, or knowledge files usually use an uploaded ZIP rather than a local skills directory. Package the skill folder:
 
 ```bash
 git clone https://github.com/MercuryZzz-123/polish_skill.git
@@ -70,7 +70,7 @@ cd polish_skill
 zip -r paper-polisher.zip paper-polisher
 ```
 
-Then upload `paper-polisher.zip` in Claude.ai:
+Then upload `paper-polisher.zip` in the corresponding web AI interface. The exact menu varies by platform; in Claude.ai it is typically:
 
 ```text
 Customize > Skills > Create skill > Upload a skill

@@ -65,9 +65,9 @@ cp -r polish_skill/paper-polisher ~/.claude/skills/
 
 如果只想在某个项目中使用，也可以把 `paper-polisher` 复制到目标项目的 `.claude/skills/` 目录下。
 
-### Claude.ai 网页版
+### 网页 AI 平台
 
-Claude.ai 使用上传 ZIP 的方式安装 skill。可以先打包：
+对于 Claude.ai、ChatGPT 等支持上传自定义 skill、项目文件或知识文件的网页 AI 平台，通常可以先打包 skill 文件夹：
 
 ```bash
 git clone https://github.com/MercuryZzz-123/polish_skill.git
@@ -75,7 +75,7 @@ cd polish_skill
 zip -r paper-polisher.zip paper-polisher
 ```
 
-然后在 Claude.ai 中上传：
+然后在对应的网页 AI 平台中上传 `paper-polisher.zip`。具体入口因平台而异；在 Claude.ai 中通常是：
 
 ```text
 Customize > Skills > Create skill > Upload a skill
