@@ -27,12 +27,10 @@ paper-polisher/
 Clone this repository and copy the skill folder into your Codex skills directory:
 
 ```bash
-git clone https://github.com/YOUR_NAME/polish-skill.git
+git clone https://github.com/MercuryZzz-123/polish_skill.git
 mkdir -p ~/.codex/skills
-cp -r polish-skill/paper-polisher ~/.codex/skills/
+cp -r polish_skill/paper-polisher ~/.codex/skills/
 ```
-
-Replace `YOUR_NAME` with your GitHub username after creating the repository.
 
 ## Usage
 
