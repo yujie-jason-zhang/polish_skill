@@ -1,5 +1,7 @@
 # Paper Polisher Skill
 
+[Simplified Chinese README](README.zh-CN.md)
+
 A Codex skill for polishing TeX academic papers into formal, objective engineering-journal English.
 
 The skill focuses on argument reconstruction, terminology consistency, and TeX-safe polishing. It is designed for abstracts, introductions, related work, methodology sections, formula explanations, theory/proof sections, experiments, results, discussion, and conclusions.
