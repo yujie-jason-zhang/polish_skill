@@ -18,12 +18,13 @@ For full-paper polishing, section-level rewriting, or any request that asks for 
 - Do not change mathematical definitions, algorithm steps, experimental settings, theorem conditions, proof logic, or reported results.
 - Do not invent contributions, claims, experiments, guarantees, or deployment value that the source text does not support.
 - Do not polish by word-for-word translation. First identify the function of each paragraph and its role in the paper's argument.
+- Do not vary technical terms for stylistic variety. For each key technical concept, choose a canonical term or term family based on the domain context, and use the same form in equivalent contexts unless the text explicitly distinguishes different concepts or technical roles.
 
 ## Workflow
 
 1. Identify the core research problem, application scenario, technical bottleneck, and main claim.
 2. Mark each paragraph's function: background, problem, gap, motivation, method, mechanism, theory, experiment, result interpretation, or implication.
-3. Build or infer a terminology map for key methods, modules, metrics, variables, and abbreviations; keep terminology consistent.
+3. Build or infer a terminology map for key methods, modules, metrics, variables, and abbreviations; choose canonical terms or term families for ambiguous source terms and keep them consistent across equivalent contexts.
 4. Reconstruct the argument before sentence-level polishing. Use a storyline such as:
 
 ```text
@@ -55,7 +56,7 @@ Check:
 
 - TeX preservation: equations, environments, labels, references, citations, variables, and structural command keys are unchanged.
 - Technical fidelity: no mathematical, algorithmic, experimental, or claim-level meaning has been changed.
-- Terminology consistency: key terms, module names, metrics, variables, and abbreviations are used consistently.
+- Terminology consistency: key terms, module names, metrics, variables, and abbreviations are used consistently; variants are justified by distinct concepts, grammatical roles, or technical roles rather than stylistic variety.
 - Problem-driven storyline: each section, paragraph, module, formula, experiment, and conclusion serves the core research problem.
 - Section compliance: the rewritten title, abstract, introduction, methodology, formula explanations, experiments, results, and conclusion follow the relevant guidance.
 - Tone and claims: language is objective, restrained, academic, and free of unsupported or exaggerated claims.

@@ -93,6 +93,22 @@ Do not change mathematical definitions, algorithm steps, or experimental setting
 
 Once terms, abbreviations, module names, and variable meanings are established, keep them consistent throughout the manuscript.
 
+Do not alternate technical synonyms for stylistic variety. Technical English values stable naming more than lexical variety. For each important technical concept, choose a canonical term or term family based on the domain, technical object, intended function, grammatical role, and established collocations in the target field.
+
+For full papers, long sections, or terminology-dense passages, build a small terminology ledger before drafting. For short paragraphs, infer the ledger mentally and still apply the same consistency check.
+
+| Source term | Technical concept | Canonical term/family | Allowed contextual forms | Avoid or reserve for |
+|---|---|---|---|---|
+| ... | ... | ... | ... | ... |
+
+After drafting, run a consistency pass:
+
+- Check whether the same technical concept was expressed with different English terms in equivalent contexts.
+- Check whether different technical concepts were collapsed into the same English term.
+- Keep contextual variants only when they reflect different grammatical roles or technical roles, such as task name, adjective modifier, output property, metric, or module name.
+- Replace non-canonical variants unless the context clearly indicates a different technical concept or role.
+- If two English terms must both appear, make the distinction explicit.
+
 For example:
 
 - Do not mix `open-vocabulary` with `open-set` or `open-world` unless the concepts are intentionally different.
@@ -100,7 +116,12 @@ For example:
 - Distinguish `risk-aware`, `safety-aware`, and `uncertainty-aware` according to their actual meanings.
 - Keep module names, function names, and variable explanations consistent.
 
-If the source manuscript uses multiple expressions for the same concept, choose the most accurate one and unify it throughout the paper.
+If the source manuscript uses multiple expressions for the same concept, choose the most accurate canonical term or term family and unify it throughout the paper.
+
+Contrastive terminology examples:
+
+- `避障`: Do not translate it mechanically as `obstacle avoidance` in every context. If the manuscript is about a mobile robot maneuvering around obstacles, the canonical family may be `obstacle avoidance`, `obstacle-avoidance planner`, and `obstacle-avoiding behavior`. If the manuscript is about vehicles, UAVs, safety systems, or preventing impacts, the canonical family may be `collision avoidance`, `collision-avoidance system`, and `collision-free trajectory`. These forms can coexist when they express task, modifier, and output property within the same concept family. Do not switch between `obstacle avoidance` and `collision avoidance` in equivalent contexts unless the text distinguishes obstacle-centered maneuvering from impact prevention.
+- `航向角`: Do not alternate `heading`, `orientation`, and `yaw` casually. If the manuscript treats it as a planar navigation angle, the canonical family may be `heading angle`, `heading`, and `heading-angle error`. In vehicle or robot kinematics, if the paper defines the quantity as rotation about the vertical axis, `yaw angle` may be the canonical term instead. Reserve `orientation` for broader pose or attitude descriptions. If both must appear, distinguish them explicitly, such as: `The orientation includes roll, pitch, and yaw, whereas the heading angle refers only to the yaw component.`
 
 ---
 
@@ -272,9 +293,12 @@ Replacement should always be context-sensitive. Clarity, accuracy, and natural e
 
 3. **Lock terminology, abbreviations, variables, and module names.**
    - Build a terminology map.
+   - Choose canonical terms or term families for ambiguous source terms.
    - Unify module names.
    - Unify metric names.
    - Unify variable explanations.
+   - Do not alternate synonyms merely to avoid repetition.
+   - Allow variants only when they reflect different grammatical roles or technical roles.
 
 4. **Check storyline consistency.**
    - Does each module respond to the core problem?
