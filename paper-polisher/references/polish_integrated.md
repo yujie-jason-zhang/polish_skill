@@ -701,10 +701,13 @@ For example, `solve` may be correct in mathematical optimization, and `use` may 
 
 ## 7. Figure, Table, and Citation Conventions
 
-Use consistently:
+Follow the target journal, conference, or template convention first. `Figure~\ref{...}`, `Fig.~\ref{...}`, and other variants are style choices, not correctness rules. If the user specifies a venue or style guide, follow that convention. If no venue is specified, infer the convention from the existing manuscript and keep it consistent. If neither is available, choose one convention and use it consistently throughout the polished text.
+
+Common valid conventions include:
 
 ```latex
 Figure~\ref{...}
+Fig.~\ref{...}
 Table~\ref{...}
 Eq.~\eqref{...}
 Algorithm~\ref{...}
@@ -712,13 +715,15 @@ Section~\ref{...}
 ~\cite{...}
 ```
 
-Avoid mixing:
+Do not mix conventions within the same manuscript unless the target template requires different forms for different contexts, such as caption labels, in-text references, and list-of-figures entries.
 
 ```latex
-Fig.~\ref{...}
-Tab.~\ref{...}
-equation (\ref{...})
+Figure~\ref{...} ... Fig.~\ref{...}
+Table~\ref{...} ... Tab.~\ref{...}
+Eq.~\eqref{...} ... equation (\ref{...})
 ```
+
+For IEEE-style venues, including many T-ASE manuscripts, `Fig.~\ref{...}` may be the appropriate in-text form. Preserve and unify that style when it matches the target venue or the source manuscript.
 
 Captions should preferably be complete phrases or complete sentences and end with a period.
 
