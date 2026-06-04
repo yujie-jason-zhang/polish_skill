@@ -220,6 +220,23 @@ Improve clarity and argumentation without changing the technical truth.
 
 ---
 
+### 2.7 Escalate Rule Conflicts
+
+If a requested edit or seemingly necessary correction would conflict with any non-negotiable rule, stop and ask the user before making that edit. Do not silently override the rule.
+
+Escalate before changing:
+
+- protected TeX keys, including labels, references, citations, `\bibitem` keys, and BibTeX entry keys;
+- formulas, algorithm steps, theorem conditions, proof logic, experimental settings, or reported results;
+- numerical data, units, percentages, statistics, table entries, figure-reported values, metrics, parameters, baselines, dataset names, sample sizes, or significance markers;
+- bibliography entries, author names, reference-list formatting, BibTeX fields, DOI/URL/arXiv identifiers, years, pages, venues, or publishers;
+- contributions, claims, conclusions, guarantees, experiments, or deployment value not supported by the source;
+- terminology choices when the context is insufficient to choose the correct canonical term or term family.
+
+If the draft produced during polishing violates a rule, revise the draft to restore compliance without asking the user. Ask the user only when the desired change would require breaking a rule, when the correct technical or bibliographic form cannot be determined from the source, or when the user explicitly requests a protected change.
+
+---
+
 ## 3. Recommended Writing Style
 
 The paper should generally follow this argument chain:
@@ -315,9 +332,12 @@ Replacement should always be context-sensitive. Clarity, accuracy, and natural e
 
 7. **Run the post-polishing review.**
    - Check language, terminology, storyline, TeX compliance, technical fidelity, and output completeness.
-   - If any item fails, revise the polished text and review it again.
+   - If any ordinary polishing item fails, revise the polished text and review it again.
+   - If a bibliography-entry or reference-list formatting issue is found, report it for user review rather than editing the entry automatically.
 
-8. **Return a Markdown version, a TeX version, a review report, and a compliance note.**
+8. **Return the selected output format.**
+   - Use the lightweight format for short local edits.
+   - Use the full four-part format for full papers, major sections, submission-oriented polishing, or strict style-guide requests.
 
 ---
 
@@ -700,9 +720,11 @@ For example, `solve` may be correct in mathematical optimization, and `use` may 
 
 ---
 
-## 7. Figure, Table, and Citation Conventions
+## 7. Figure, Table, Citation, and Bibliography Conventions
 
 Follow the target journal, conference, or template convention first. `Figure~\ref{...}`, `Fig.~\ref{...}`, and other variants are style choices, not correctness rules. If the user specifies a venue or style guide, follow that convention. If no venue is specified, infer the convention from the existing manuscript and keep it consistent. If neither is available, choose one convention and use it consistently throughout the polished text.
+
+When a target journal, conference, or publisher is specified and web access is available and allowed, verify the venue's author instructions, LaTeX template, or recent published papers before normalizing figure, table, equation, and citation references. Prefer official author guidelines and templates. If official guidance is unavailable, infer the convention from recent papers in the target venue. If web access is unavailable or not allowed, infer from the source manuscript and keep the convention consistent.
 
 Common valid conventions include:
 
@@ -725,6 +747,16 @@ Eq.~\eqref{...} ... equation (\ref{...})
 ```
 
 For IEEE-style venues, including many T-ASE manuscripts, `Fig.~\ref{...}` may be the appropriate in-text form. Preserve and unify that style when it matches the target venue or the source manuscript.
+
+Bibliography checks apply only when the source manuscript already contains references, `\bibitem` entries, BibTeX entries, or `.bib` content. Do not require, fabricate, or complete missing bibliography data during polishing.
+
+When bibliography content is present, check consistency and report issues rather than editing bibliography entries automatically. In particular:
+
+- Do not change citation keys, `\bibitem` keys, BibTeX entry keys, author names, reference-list formatting, BibTeX fields, DOI/URL/arXiv identifiers, years, volumes, pages, or publishers unless the user explicitly approves reference cleanup after reviewing the issue.
+- Check whether the same author appears with inconsistent name order, spelling, initials, capitalization, or transliteration, such as `Zhang SanSi` in one entry and `SanSi Zhang` in another.
+- Check whether the same paper appears as duplicate or conflicting entries with different titles, venues, years, pages, DOI, or arXiv identifiers.
+- Check whether venue names and abbreviations are consistent with the selected venue or bibliography style.
+- If a bibliography-entry or reference-list formatting issue is found, tell the user what appears inconsistent and ask them to review it before any modification is made. Do not silently fix author order, title spelling, venue abbreviations, punctuation, capitalization, DOI/URL/arXiv identifiers, BibTeX fields, or reference-list formatting.
 
 Captions should preferably be complete phrases or complete sentences and end with a period.
 
@@ -772,10 +804,13 @@ If the answer is no, the content may be redundant or poorly integrated. Consider
 
 After polishing, run a review pass before returning the final answer. The review is not a separate editing style; it is a verification step against this guide.
 
+When both original and polished TeX files are available and local tool execution is supported, run `scripts/check_preservation.py original.tex polished.tex` before finalizing full-paper or major-section polishing. Use it only on the original TeX content and the polished TeX content, not on a full assistant response that also contains review reports or notes.
+
 The review should check:
 
-- TeX preservation: equations, environments, labels, references, citations, variables, and structural command keys are unchanged.
+- TeX preservation: equations, environments, labels, references, citations, bibliography keys, variables, and structural command keys are unchanged.
 - Technical fidelity: mathematical definitions, algorithm steps, theorem conditions, proof logic, experimental settings, source data, numerical values, reported results, and claim boundaries are preserved.
+- Citation and bibliography consistency: citation style follows the selected venue/source convention; existing bibliography entries are checked for inconsistent author names, title spelling, venue names, years, pages, DOI/URL/arXiv identifiers, and duplicate or conflicting entries, and bibliography-entry or reference-list formatting issues are reported for user review rather than edited automatically.
 - Terminology consistency: key terms, module names, function names, metrics, variables, and abbreviations are used consistently.
 - Problem-driven storyline: every section, paragraph, module, formula, experiment, result interpretation, and conclusion serves the core research problem.
 - Section-level guidance: the title, abstract, introduction, related work, methodology, formula explanations, theory/proof, experiments, results, discussion, and conclusion follow their relevant guidance when present.
@@ -783,9 +818,11 @@ The review should check:
 - Experiment alignment: each experiment is linked to a claim, module, metric, or deployment requirement.
 - Result interpretation: results explain observations, mechanisms, connection to the core problem, and practical or theoretical implication.
 - Objective tone: the text avoids colloquial wording, subjective claims, exaggerated conclusions, and unsupported deployment value.
-- Output completeness: the Markdown version, TeX version, review report, and compliance note are present unless the user requested a different output format.
+- Output completeness: the response follows the selected output mode. Short local edits use the lightweight format; full papers, major sections, submission-oriented polishing, and strict style-guide requests use the full four-part format unless the user requests otherwise.
 
-If a review item fails, revise the polished text before returning the answer and then review it again. If a review item cannot be fully verified because the source text is incomplete, mark it as `NOT FULLY VERIFIABLE` and briefly explain why. Do not mark unverifiable items as `PASS`.
+If a review item fails, revise the polished text before returning the answer and then review it again. The exception is bibliography-entry or reference-list formatting issues: report those for user review and do not edit the bibliography entries unless the user explicitly approves reference cleanup. If a review item cannot be fully verified because the source text is incomplete, mark it as `NOT FULLY VERIFIABLE` and briefly explain why. Do not mark unverifiable items as `PASS`.
+
+For bibliography-entry or reference-list formatting issues that require user review, mark citation and bibliography consistency as `ISSUE REPORTED` and describe the issue without modifying the entry. If no reference content is present, mark it as `NOT PRESENT`.
 
 Recommended review report:
 
@@ -794,6 +831,7 @@ Review report:
 - TeX preservation: PASS
 - Technical fidelity: PASS
 - Terminology consistency: PASS
+- Citation and bibliography consistency: PASS / ISSUE REPORTED / NOT PRESENT
 - Problem-driven storyline: PASS
 - Section-level guidance: PASS
 - Formula and mechanism explanation: PASS
@@ -806,7 +844,16 @@ Review report:
 
 ## 10. Output Requirements
 
-By default, an actual polishing task should return four parts:
+For short paragraph polishing, sentence-level polishing, or local revision requests, use a lightweight output format unless the user requests the full report.
+
+Treat a request as a short local edit when the input is one sentence, one paragraph, or a small excerpt that is not a complete manuscript section and normally does not require section-level argument reconstruction. If the input is a complete abstract, introduction subsection, methodology subsection, experiment discussion, conclusion, or any named manuscript section, use the full-paper/major-section output mode even if the text is short.
+
+1. polished version;
+2. brief note, only if needed, on terminology, TeX preservation, data preservation, or claim fidelity.
+
+Do not return the full Markdown version, TeX version, review report, and compliance note for short local edits unless explicitly requested. Still run the post-polishing review internally before responding.
+
+For full papers, major sections, submission-oriented polishing, or strict style-guide compliance requests, return four parts:
 
 ### 10.1 Markdown Version
 
@@ -825,7 +872,7 @@ By default, an actual polishing task should return four parts:
 ### 10.3 Review Report
 
 - states the result of the post-polishing review;
-- uses `PASS`, `REVISED`, or `NOT FULLY VERIFIABLE` for each check;
+- uses `PASS`, `REVISED`, `ISSUE REPORTED`, `NOT PRESENT`, or `NOT FULLY VERIFIABLE` as appropriate;
 - briefly explains any unresolved limitation;
 - does not hide failed or unverifiable checks.
 
@@ -846,6 +893,7 @@ Recommended format:
 Compliance note:
 - TeX structures, equations, labels, references, citations, and their original keys are preserved.
 - Terminology has been checked for consistency.
+- Citation and bibliography consistency has been checked when reference content is present; bibliography-entry issues are reported for user review rather than edited automatically.
 - The language has been revised toward an objective engineering-journal style.
 - The problem-driven storyline has been checked across the abstract, introduction, methodology, experiments, and conclusion.
 - No unsupported technical claims or experimental results have been introduced.
@@ -856,7 +904,7 @@ Compliance note:
 ## 11. One-Sentence Execution Prompt
 
 ```text
-Please polish the given TeX paper into formal engineering-journal English consistent with my integrated style guide. Use a problem-driven storyline rather than a module-stacking structure. Ensure that each section, paragraph, module, formula, experiment, and conclusion serves the core research problem. Use explicit logical transitions, objective academic tone, moderate nominalization and passive voice, and clear mechanism-oriented explanations after formulas. Preserve all TeX structures, equations, labels, references, citations, variables, and technical meanings, including the exact original keys inside \label{...}, \ref{...}, \eqref{...}, \cite{...}, \citep{...}, and \citet{...}. Ensure terminology consistency, theorem objectivity, faithful claim boundaries, and a balanced emphasis on theoretical rigor and deployment value. After polishing, run a post-polishing review against the style guide and revise the text if any item fails. Return a Markdown version, a TeX version, a review report, and a compliance note, and explicitly state whether the polishing strictly follows the guide.
+Please polish the given TeX paper or manuscript section into formal engineering-journal English consistent with my integrated style guide. Use a problem-driven storyline rather than a module-stacking structure. Preserve all TeX structures, equations, labels, references, citations, variables, technical meanings, source data, reported results, and protected bibliography keys. Ensure terminology consistency, objective tone, faithful claim boundaries, and mechanism-oriented explanations where needed. After polishing, run the post-polishing review against the style guide. Revise ordinary polishing issues before responding, but report bibliography-entry or reference-list formatting issues for my review instead of modifying them automatically. Use the lightweight output format for short local edits, and use the full four-part output format for full papers, major sections, submission-oriented polishing, or strict style-guide requests.
 ```
 
 ---

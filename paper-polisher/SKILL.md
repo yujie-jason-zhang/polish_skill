@@ -17,9 +17,16 @@ For full-paper polishing, section-level rewriting, or any request that asks for 
 - Preserve the exact original arguments and keys inside structural commands, including `\label{...}`, `\ref{...}`, `\eqref{...}`, `\cite{...}`, `\citep{...}`, and `\citet{...}`. Do not translate, rename, merge, delete, reorder, or normalize these keys.
 - Do not change mathematical definitions, algorithm steps, experimental settings, theorem conditions, proof logic, or reported results.
 - Do not alter source data, including numerical values, units, percentages, statistics, table entries, figure-reported values, metric names, parameter settings, baselines, dataset names, sample sizes, or significance markers. If a value appears inconsistent, flag it instead of correcting it silently.
+- Do not require or invent missing bibliography entries. When references, `\bibitem` entries, BibTeX entries, or `.bib` content are present, preserve them and check consistency of citation keys, author names, title spelling, venue names, years, pages, DOI/URL/arXiv identifiers, and publishers. Report any bibliography-entry or reference-list formatting issue for user review; do not modify bibliography entries, author names, reference-list formatting, or BibTeX fields unless the user explicitly approves that reference cleanup after reviewing the issue.
 - Do not invent contributions, claims, experiments, guarantees, or deployment value that the source text does not support.
 - Do not polish by word-for-word translation. First identify the function of each paragraph and its role in the paper's argument.
 - Do not vary technical terms for stylistic variety. For each key technical concept, choose a canonical term or term family based on the domain context, and use the same form in equivalent contexts unless the text explicitly distinguishes different concepts or technical roles.
+
+## Rule-Conflict Escalation
+
+If a requested edit or seemingly necessary correction would conflict with any non-negotiable rule, stop and ask the user before making that edit. Do not silently override the rule. This includes changing protected TeX keys, formulas, algorithms, experimental settings, numerical data, reported results, bibliography entries, BibTeX fields, or unsupported claims.
+
+If the agent's own draft violates a rule, revise the draft to restore compliance without asking the user. Ask the user only when the desired change would require breaking a rule, when the correct technical or bibliographic form cannot be determined from the source, or when the user explicitly requests a protected change.
 
 ## Workflow
 
@@ -36,6 +43,10 @@ Core problem -> Specific challenge -> Required capability -> Proposed module -> 
 6. Check every formula, module, experiment, and conclusion against the core problem. Remove module-stacking phrasing when possible.
 7. Run the post-polishing review before responding. If any violation is found, revise the polished text first and review it again.
 8. Verify TeX preservation, terminology consistency, claim fidelity, objective tone, and style-guide compliance before responding.
+
+## Preservation Script
+
+When both original and polished TeX files are available, run `scripts/check_preservation.py original.tex polished.tex` before finalizing full-paper or major-section polishing. If the script reports changed TeX keys or numeric tokens, revise the polished text or flag the discrepancy explicitly. Use this script only on the original TeX content and the polished TeX content, not on a full assistant response that also contains review reports or notes.
 
 ## Section Guidance
 
@@ -55,19 +66,29 @@ After polishing, review the result against the source text and the style guide b
 
 Check:
 
-- TeX preservation: equations, environments, labels, references, citations, variables, and structural command keys are unchanged.
+- TeX preservation: equations, environments, labels, references, citations, bibliography keys, variables, and structural command keys are unchanged.
 - Technical fidelity: no mathematical, algorithmic, experimental, numerical, data-level, or claim-level meaning has been changed.
+- Citation and bibliography consistency: citation style follows the selected venue/source convention; existing bibliography entries are checked for inconsistent author names, title spelling, venue names, years, pages, DOI/URL/arXiv identifiers, and duplicate or conflicting entries, and bibliography-entry or reference-list formatting issues are reported for user review rather than edited automatically.
 - Terminology consistency: key terms, module names, metrics, variables, and abbreviations are used consistently; variants are justified by distinct concepts, grammatical roles, or technical roles rather than stylistic variety.
 - Problem-driven storyline: each section, paragraph, module, formula, experiment, and conclusion serves the core research problem.
 - Section compliance: the rewritten title, abstract, introduction, methodology, formula explanations, experiments, results, and conclusion follow the relevant guidance.
 - Tone and claims: language is objective, restrained, academic, and free of unsupported or exaggerated claims.
-- Output completeness: Markdown version, TeX version, review report, and compliance note are present unless the user requested a different format.
+- Output completeness: the response follows the selected output mode. Short local edits use the lightweight format; full papers, major sections, submission-oriented polishing, and strict style-guide requests use the full four-part format unless the user requests otherwise.
 
-If a check fails, correct the polished text before returning it. If a check cannot be fully verified because the source is incomplete, state the limitation explicitly instead of marking it as passed.
+If a check fails, correct the polished text before returning it. The exception is bibliography-entry or reference-list formatting issues: report those for user review and do not edit the bibliography entries unless the user explicitly approves reference cleanup. If a check cannot be fully verified because the source is incomplete, state the limitation explicitly instead of marking it as passed.
 
 ## Output Format
 
-Unless the user requests another format, return:
+For short paragraph polishing, sentence-level polishing, or local revision requests, use a lightweight output format unless the user requests the full report.
+
+Treat a request as a short local edit when the input is one sentence, one paragraph, or a small excerpt that is not a complete manuscript section and normally does not require section-level argument reconstruction. If the input is a complete abstract, introduction subsection, methodology subsection, experiment discussion, conclusion, or any named manuscript section, use the full-paper/major-section output mode even if the text is short.
+
+1. Polished version.
+2. Brief note, only if needed, on terminology, TeX preservation, data preservation, or claim fidelity.
+
+Do not return the full Markdown version, TeX version, review report, and compliance note for short local edits unless explicitly requested. Still run the post-polishing review internally before responding.
+
+For full papers, major sections, submission-oriented polishing, or strict style-guide compliance requests, return:
 
 1. Markdown version: polished text for reading and revision.
 2. TeX version: TeX-safe version ready to paste back into the manuscript.
@@ -81,6 +102,7 @@ Review report:
 - TeX preservation: PASS
 - Technical fidelity: PASS
 - Terminology consistency: PASS
+- Citation and bibliography consistency: PASS / ISSUE REPORTED / NOT PRESENT
 - Problem-driven storyline: PASS
 - Section-level guidance: PASS
 - Objective tone and claim boundaries: PASS
@@ -93,6 +115,7 @@ Use this compliance note pattern:
 Compliance note:
 - TeX structures, equations, labels, references, citations, and their original keys are preserved.
 - Terminology has been checked for consistency.
+- Citation and bibliography consistency has been checked when reference content is present; bibliography-entry issues are reported for user review rather than edited automatically.
 - The language has been revised toward an objective engineering-journal style.
 - The problem-driven storyline has been checked across the relevant sections.
 - No unsupported technical claims or experimental results have been introduced.

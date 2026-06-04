@@ -14,12 +14,15 @@ Paper Polisher focuses on argument reconstruction, terminology consistency, and 
 - Improves academic tone while avoiding unsupported claims or exaggerated conclusions.
 - Checks terminology consistency across modules, variables, metrics, and claims.
 - Runs a post-polishing review against the bundled style guide before returning the final result.
+- Includes an optional preservation check script for detecting changed TeX keys or numeric tokens in local full-paper workflows.
 
 ## Structure
 
 ```text
 paper-polisher/
 |-- SKILL.md
+|-- scripts/
+|   `-- check_preservation.py
 `-- references/
     `-- polish_integrated.md
 ```
@@ -89,6 +92,16 @@ After polishing, run the post-polishing review against the style guide.
 ```
 
 For full papers or major sections, the agent should use `references/polish_integrated.md` as the detailed style and workflow guide.
+
+## Optional Preservation Check
+
+For local full-paper or major-section workflows, compare the original and polished TeX files before finalizing:
+
+```bash
+python3 paper-polisher/scripts/check_preservation.py original.tex polished.tex
+```
+
+The script reports changed structural TeX keys and numeric tokens. It should be run only on the original TeX content and the polished TeX content, not on a full AI response that also contains review reports or notes.
 
 ## Recommended Workflow
 

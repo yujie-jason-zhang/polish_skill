@@ -1,1 +1,3 @@
 paper-polisher/references/polish_integrated_zh.md
+__pycache__/
+*.pyc

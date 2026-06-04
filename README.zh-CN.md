@@ -14,12 +14,15 @@
 - 改善英文表达，使其更正式、客观、克制，符合工程期刊写作风格。
 - 检查术语、模块名、变量、指标和贡献表述是否一致。
 - 润色完成后执行 post-polishing review，并输出 review report 和 compliance note。
+- 提供一个可选的本地保全检查脚本，用于检测 TeX key 或数值 token 是否被改动。
 
 ## 项目结构
 
 ```text
 paper-polisher/
 |-- SKILL.md
+|-- scripts/
+|   `-- check_preservation.py
 `-- references/
     `-- polish_integrated.md
 ```
@@ -101,6 +104,16 @@ After polishing, run the post-polishing review against the style guide.
 
 对于整篇论文或重要章节，应让 AI 使用 `references/polish_integrated.md` 作为详细风格指南。
 
+## 可选保全检查
+
+对于本地全文或大章节润色流程，可以在最终确认前比较原始 TeX 文件和润色后的 TeX 文件：
+
+```bash
+python3 paper-polisher/scripts/check_preservation.py original.tex polished.tex
+```
+
+这个脚本会报告结构性 TeX key 和数值 token 是否发生变化。它只应运行在原始 TeX 内容和润色后的 TeX 内容上，不应运行在包含 review report 或 notes 的完整 AI 回复上。
+
 ## 推荐工作流
 
 如果是投稿前润色，建议不要直接孤立地逐段润色，也不要一开始就一次性让模型改完整篇。更稳妥的流程是：
@@ -115,11 +128,19 @@ After polishing, run the post-polishing review against the style guide.
 Full-paper diagnosis -> Section-level polishing -> Full-paper review
 ```
 
-如果只是短论文、草稿或局部快速润色，也可以直接进行整篇或单节润色，但最后仍建议执行 review report 和 compliance note。
+如果只是短论文、草稿或局部快速润色，也可以直接进行整篇或单节润色；短段落和局部修改默认使用轻量输出，全文或重要章节仍建议执行 review report 和 compliance note。
 
 ## 输出内容
 
-默认情况下，Paper Polisher 会输出四部分：
+Paper Polisher 会根据任务范围选择输出方式。短段落、单句或局部修改默认使用轻量输出：
+
+1. Polished version
+   润色后的文本。
+
+2. Brief note
+   仅在需要时说明术语、TeX 保留、数据保留或 claim fidelity 问题。
+
+对于整篇论文、重要章节、投稿前润色或严格 style-guide 请求，输出四部分：
 
 1. Markdown version  
    便于阅读和修改的润色版本。
