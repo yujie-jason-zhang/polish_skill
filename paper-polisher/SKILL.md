@@ -68,7 +68,7 @@ Check:
 
 - TeX preservation: equations, environments, labels, references, citations, bibliography keys, variables, and structural command keys are unchanged.
 - Technical fidelity: no mathematical, algorithmic, experimental, numerical, data-level, or claim-level meaning has been changed.
-- Citation and bibliography consistency: citation style follows the selected venue/source convention; existing bibliography entries are checked for inconsistent author names, title spelling, venue names, years, pages, DOI/URL/arXiv identifiers, and duplicate or conflicting entries, and bibliography-entry or reference-list formatting issues are reported for user review rather than edited automatically.
+- Citation and bibliography consistency: citation style follows the selected venue/source convention; existing bibliography entries are checked for inconsistent author names, possible family-name/given-name order issues, title spelling, venue names, years, pages, DOI/URL/arXiv identifiers, and duplicate or conflicting entries. Suspected Chinese-name order issues, such as `Zhang SanSi`, `SanSi Zhang`, `Zhang, S.`, and `S. Zhang` potentially referring to the same author, are reported for user review rather than normalized automatically.
 - Terminology consistency: key terms, module names, metrics, variables, and abbreviations are used consistently; variants are justified by distinct concepts, grammatical roles, or technical roles rather than stylistic variety.
 - Problem-driven storyline: each section, paragraph, module, formula, experiment, and conclusion serves the core research problem.
 - Section compliance: the rewritten title, abstract, introduction, methodology, formula explanations, experiments, results, and conclusion follow the relevant guidance.
