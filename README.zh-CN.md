@@ -1,10 +1,10 @@
-# Paper Polisher Skill
+# Paper Polisher
 
-一个用于 TeX 学术论文英文润色、论证重构和润色后审查的 Codex / Claude skill。
+一个平台无关的 AI 论文润色指南和可复用 skill 文件夹，用于 TeX 学术论文英文润色、论证重构和润色后审查。
 
-这个项目的目标不是简单把句子改得更像英文，也不是机械提升词汇复杂度，而是帮助论文形成更清晰的 problem-driven storyline。它适合用于摘要、引言、相关工作、方法、公式解释、理论证明、实验、结果分析、讨论和结论等部分。
+这个项目不绑定某一个 AI 助手，可以用于 Codex、Claude Code、Claude.ai、ChatGPT，或任何能够加载项目说明、自定义 skill、知识文件的 AI 工作流。它的目标不是简单把句子改得更像英文，也不是机械提升词汇复杂度，而是帮助论文形成更清晰的 problem-driven storyline。它适合用于摘要、引言、相关工作、方法、公式解释、理论证明、实验、结果分析、讨论和结论等部分。
 
-> 注意：skill 本体仍然保持英文，包括 `SKILL.md` 和 `references/polish_integrated.md`。这个中文版 README 只是为了方便中文用户理解和安装。
+> 注意：核心文件仍然保持英文，包括 `SKILL.md` 和 `references/polish_integrated.md`。这个中文版 README 只是为了方便中文用户理解和安装。
 
 ## 功能
 
@@ -31,7 +31,9 @@ paper-polisher/
 
 ## 安装方式
 
-### Codex
+根据你的 AI 环境选择对应安装方式即可。这个仓库有意保持平台中立，不限定只能用于某一个助手。
+
+### Codex 本地 Skills
 
 克隆仓库，并把 skill 文件夹复制到 Codex 的 skills 目录：
 
@@ -47,7 +49,7 @@ cp -r polish_skill/paper-polisher ~/.codex/skills/
 ~/.codex/skills/paper-polisher/SKILL.md
 ```
 
-### Claude Code
+### Claude Code 本地 Skills
 
 个人级 Claude Code skill 可以安装到：
 
@@ -67,7 +69,7 @@ cp -r polish_skill/paper-polisher ~/.claude/skills/
 
 ### 网页 AI 平台
 
-对于 Claude.ai、ChatGPT 等支持上传自定义 skill、项目文件或知识文件的网页 AI 平台，通常可以先打包 skill 文件夹：
+对于 Claude.ai、ChatGPT 等支持上传自定义 skill、项目文件或知识文件的网页 AI 平台，通常可以先打包 `paper-polisher` 文件夹：
 
 ```bash
 git clone https://github.com/MercuryZzz-123/polish_skill.git
@@ -92,12 +94,12 @@ paper-polisher.zip
 可以这样调用：
 
 ```text
-Please use the paper-polisher skill to polish the following TeX section into formal engineering-journal English.
+Please use the paper-polisher guide/skill to polish the following TeX section into formal engineering-journal English.
 Preserve all equations, labels, references, citations, variables, and technical meanings.
 After polishing, run the post-polishing review against the style guide.
 ```
 
-对于整篇论文或重要章节，skill 会使用 `references/polish_integrated.md` 作为详细风格指南。
+对于整篇论文或重要章节，应让 AI 使用 `references/polish_integrated.md` 作为详细风格指南。
 
 ## 推荐工作流
 
@@ -117,7 +119,7 @@ Full-paper diagnosis -> Section-level polishing -> Full-paper review
 
 ## 输出内容
 
-默认情况下，skill 会输出四部分：
+默认情况下，Paper Polisher 会输出四部分：
 
 1. Markdown version  
    便于阅读和修改的润色版本。

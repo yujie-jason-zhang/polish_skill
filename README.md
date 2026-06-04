@@ -1,10 +1,10 @@
-# Paper Polisher Skill
+# Paper Polisher
 
 Languages: [English](README.md) | [Simplified Chinese](README.zh-CN.md)
 
-A Codex skill for polishing TeX academic papers into formal, objective engineering-journal English.
+A platform-neutral AI polishing guide and reusable skill folder for turning TeX academic papers into formal, objective engineering-journal English.
 
-The skill focuses on argument reconstruction, terminology consistency, and TeX-safe polishing. It is designed for abstracts, introductions, related work, methodology sections, formula explanations, theory/proof sections, experiments, results, discussion, and conclusions.
+Paper Polisher focuses on argument reconstruction, terminology consistency, and TeX-safe polishing. It can be used with Codex, Claude Code, Claude.ai, ChatGPT, or any AI workflow that can load project instructions, custom skills, or knowledge files. It is designed for abstracts, introductions, related work, methodology sections, formula explanations, theory/proof sections, experiments, results, discussion, and conclusions.
 
 ## Features
 
@@ -26,7 +26,9 @@ paper-polisher/
 
 ## Install
 
-### Codex
+Use whichever installation path your AI environment supports. The repository is intentionally not tied to a single assistant.
+
+### Codex Local Skills
 
 Clone this repository and copy the skill folder into your Codex skills directory:
 
@@ -42,7 +44,7 @@ The installed skill should be located at:
 ~/.codex/skills/paper-polisher/SKILL.md
 ```
 
-### Claude Code
+### Claude Code Local Skills
 
 For a personal Claude Code skill, copy the same skill folder into the Claude skills directory:
 
@@ -78,19 +80,19 @@ Customize > Skills > Create skill > Upload a skill
 
 ## Usage
 
-Ask the agent to use the skill when polishing a TeX paper or section:
+Ask the agent to use Paper Polisher when polishing a TeX paper or section:
 
 ```text
-Please use the paper-polisher skill to polish the following TeX section into formal engineering-journal English.
+Please use the paper-polisher guide/skill to polish the following TeX section into formal engineering-journal English.
 Preserve all equations, labels, references, citations, variables, and technical meanings.
 After polishing, run the post-polishing review against the style guide.
 ```
 
-For full papers or major sections, the skill will use `references/polish_integrated.md` as the detailed style and workflow guide.
+For full papers or major sections, the agent should use `references/polish_integrated.md` as the detailed style and workflow guide.
 
 ## Recommended Workflow
 
-For submission-oriented polishing, use the skill with a full-paper view and a section-level editing process:
+For submission-oriented polishing, use Paper Polisher with a full-paper view and a section-level editing process:
 
 1. First provide the full manuscript and ask the agent to identify the core problem, terminology map, main storyline, and section-level issues.
 2. Then polish the manuscript section by section while preserving consistency with the full-paper diagnosis.
