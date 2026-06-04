@@ -16,6 +16,7 @@ For full-paper polishing, section-level rewriting, or any request that asks for 
 - Preserve all TeX structures, equations, environments, citations, labels, references, variables, function names, module names, and technical meanings.
 - Preserve the exact original arguments and keys inside structural commands, including `\label{...}`, `\ref{...}`, `\eqref{...}`, `\cite{...}`, `\citep{...}`, and `\citet{...}`. Do not translate, rename, merge, delete, reorder, or normalize these keys.
 - Do not change mathematical definitions, algorithm steps, experimental settings, theorem conditions, proof logic, or reported results.
+- Do not alter source data, including numerical values, units, percentages, statistics, table entries, figure-reported values, metric names, parameter settings, baselines, dataset names, sample sizes, or significance markers. If a value appears inconsistent, flag it instead of correcting it silently.
 - Do not invent contributions, claims, experiments, guarantees, or deployment value that the source text does not support.
 - Do not polish by word-for-word translation. First identify the function of each paragraph and its role in the paper's argument.
 - Do not vary technical terms for stylistic variety. For each key technical concept, choose a canonical term or term family based on the domain context, and use the same form in equivalent contexts unless the text explicitly distinguishes different concepts or technical roles.
@@ -55,7 +56,7 @@ After polishing, review the result against the source text and the style guide b
 Check:
 
 - TeX preservation: equations, environments, labels, references, citations, variables, and structural command keys are unchanged.
-- Technical fidelity: no mathematical, algorithmic, experimental, or claim-level meaning has been changed.
+- Technical fidelity: no mathematical, algorithmic, experimental, numerical, data-level, or claim-level meaning has been changed.
 - Terminology consistency: key terms, module names, metrics, variables, and abbreviations are used consistently; variants are justified by distinct concepts, grammatical roles, or technical roles rather than stylistic variety.
 - Problem-driven storyline: each section, paragraph, module, formula, experiment, and conclusion serves the core research problem.
 - Section compliance: the rewritten title, abstract, introduction, methodology, formula explanations, experiments, results, and conclusion follow the relevant guidance.

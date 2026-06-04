@@ -86,6 +86,7 @@ In particular, keys inside `\label{...}`, `\ref{...}`, `\eqref{...}`, `\cite{...
 Do not change the meaning of formulas.  
 Do not delete references, labels, or environments.  
 Do not change mathematical definitions, algorithm steps, or experimental settings for the sake of language polishing.
+Do not alter source data, including numerical values, units, percentages, statistics, table entries, figure-reported values, metric names, parameter settings, baselines, dataset names, sample sizes, or significance markers. If a value appears inconsistent, suspicious, or poorly formatted, flag it explicitly rather than correcting, rounding, converting, or normalizing it silently.
 
 ---
 
@@ -774,7 +775,7 @@ After polishing, run a review pass before returning the final answer. The review
 The review should check:
 
 - TeX preservation: equations, environments, labels, references, citations, variables, and structural command keys are unchanged.
-- Technical fidelity: mathematical definitions, algorithm steps, theorem conditions, proof logic, experimental settings, reported results, and claim boundaries are preserved.
+- Technical fidelity: mathematical definitions, algorithm steps, theorem conditions, proof logic, experimental settings, source data, numerical values, reported results, and claim boundaries are preserved.
 - Terminology consistency: key terms, module names, function names, metrics, variables, and abbreviations are used consistently.
 - Problem-driven storyline: every section, paragraph, module, formula, experiment, result interpretation, and conclusion serves the core research problem.
 - Section-level guidance: the title, abstract, introduction, related work, methodology, formula explanations, theory/proof, experiments, results, discussion, and conclusion follow their relevant guidance when present.
