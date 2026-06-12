@@ -167,7 +167,7 @@ Use whichever installation path your AI environment supports.
 Clone this repository and copy all six skill folders into your Codex skills directory:
 
 ```bash
-git clone https://github.com/MercuryZzz-123/polish_skill.git
+git clone https://github.com/yujie-jason-zhang/polish_skill.git
 mkdir -p ~/.codex/skills
 cp -r polish_skill/idea-novelty-auditor ~/.codex/skills/
 cp -r polish_skill/problem-driven-literature-review ~/.codex/skills/
@@ -184,7 +184,7 @@ You can also install only the skill you need by copying only that folder.
 For personal Claude Code skills:
 
 ```bash
-git clone https://github.com/MercuryZzz-123/polish_skill.git
+git clone https://github.com/yujie-jason-zhang/polish_skill.git
 mkdir -p ~/.claude/skills
 cp -r polish_skill/idea-novelty-auditor ~/.claude/skills/
 cp -r polish_skill/problem-driven-literature-review ~/.claude/skills/
@@ -203,7 +203,7 @@ Web AI platforms that support uploaded skills, project files, or knowledge files
 Package all skills:
 
 ```bash
-git clone https://github.com/MercuryZzz-123/polish_skill.git
+git clone https://github.com/yujie-jason-zhang/polish_skill.git
 cd polish_skill
 zip -r academic-paper-skills.zip idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher paper-cover-letter paper-response-to-reviewers
 ```

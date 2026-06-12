@@ -166,7 +166,7 @@ paper-response-to-reviewers/
 克隆仓库，并把六个 skill 文件夹复制到 Codex 的 skills 目录：
 
 ```bash
-git clone https://github.com/MercuryZzz-123/polish_skill.git
+git clone https://github.com/yujie-jason-zhang/polish_skill.git
 mkdir -p ~/.codex/skills
 cp -r polish_skill/idea-novelty-auditor ~/.codex/skills/
 cp -r polish_skill/problem-driven-literature-review ~/.codex/skills/
@@ -183,7 +183,7 @@ cp -r polish_skill/paper-response-to-reviewers ~/.codex/skills/
 个人级 Claude Code skill 可以安装到：
 
 ```bash
-git clone https://github.com/MercuryZzz-123/polish_skill.git
+git clone https://github.com/yujie-jason-zhang/polish_skill.git
 mkdir -p ~/.claude/skills
 cp -r polish_skill/idea-novelty-auditor ~/.claude/skills/
 cp -r polish_skill/problem-driven-literature-review ~/.claude/skills/
@@ -200,7 +200,7 @@ cp -r polish_skill/paper-response-to-reviewers ~/.claude/skills/
 对于支持上传 skill、项目文件或知识文件的网页 AI 平台，可以打包全部 skill：
 
 ```bash
-git clone https://github.com/MercuryZzz-123/polish_skill.git
+git clone https://github.com/yujie-jason-zhang/polish_skill.git
 cd polish_skill
 zip -r academic-paper-skills.zip idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher paper-cover-letter paper-response-to-reviewers
 ```
