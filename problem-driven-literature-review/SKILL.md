@@ -9,7 +9,7 @@ description: Write, diagnose, revise, or audit literature review, related work, 
 
 Use this skill for literature review, related work, introduction background, research-gap synthesis, reference selection, and citation-role assignment in technical research papers, organized by a problem-driven protocol rather than a method-name list.
 
-Read `references/literature_review_protocol.md` for the full protocol, worksheet, paragraph templates, reference-role table, quality gates, and per-contribution-type examples before drafting or auditing a full review. For a short background paragraph, the principle and protocol summary below are enough.
+Read `references/literature_review_protocol.md` for the full protocol, worksheet, paragraph templates, reference-role table, reference metadata check, quality gates, and per-contribution-type examples before drafting or auditing a full review. For a short background paragraph, the principle and protocol summary below are enough.
 
 Use another skill when the task is primarily:
 
@@ -22,7 +22,7 @@ Use another skill when the task is primarily:
 This skill has two modes. By default it writes or revises the review as described above. When the input is a related-work or background section another tool or skill has already drafted, switch to verification mode instead of regenerating:
 
 - do not overwrite the other tool's wording;
-- check it against this skill's rules: citation integrity, direct-competitor coverage, negative-claim hygiene, and whether the named structural gap is actually supported;
+- check it against this skill's rules: citation integrity, reference metadata quality, direct-competitor coverage, negative-claim hygiene, and whether the named structural gap is actually supported;
 - report only the deviations and their locations; fix one in place only if it breaks a hard rule.
 
 The suite's value is faithful, bounded output, not a competing rewrite. Verify rather than replace what a stronger generator already produced.
@@ -61,13 +61,14 @@ G and M are distinct: **G is the capability that is jointly missing; M is the co
 4. Compress limitations into one structural gap G, and name the missing object M.
 5. Map each contribution C to a gap component, and each claim to a validation V.
 6. Select references claim-first: write the claim, then find the reference, and give every reference a role.
-7. Run the quality gates: direct-competitor coverage, negative-claim hygiene, review-experiment alignment, and citation integrity.
+7. If BibTeX entries are created, pasted from Google Scholar, or copied from another tool, run `scripts/check_references.py` on the `.bib` content before treating the entries as manuscript-ready. Use `--online` when DOI/Crossref verification is possible, and `--strict` when warnings should block final use.
+8. Run the quality gates: direct-competitor coverage, negative-claim hygiene, review-experiment alignment, citation integrity, and reference metadata integrity.
 
-Full tables, paragraph templates, the reference-role taxonomy, retrieval flow, and per-contribution-type examples are in `references/literature_review_protocol.md`.
+Full tables, paragraph templates, the reference-role taxonomy, retrieval flow, reference metadata check, and per-contribution-type examples are in `references/literature_review_protocol.md`.
 
 ## Output
 
 - For a full Related Work section: the review prose, plus the filled S-R-L-H-G-M-C-V worksheet and the reference-role list.
 - For a diagnosis: the structural-gap sentence, the named missing object M, any uncovered direct competitors, and citation-integrity issues, then a revised structure.
 
-Keep claims bounded: do not invent references, and do not use `nobody has done this` phrasing. If recent-literature accuracy matters, verify with a search (e.g. WebSearch) or ask the user for the relevant reference set instead of asserting priority.
+Keep claims bounded: do not invent references, and do not use `nobody has done this` phrasing. Do not trust Google Scholar BibTeX as authoritative metadata; treat it as a draft export that must be checked against DOI, publisher, Crossref, DBLP, PubMed, arXiv, or the target journal style as appropriate. If recent-literature accuracy matters, verify with a search (e.g. WebSearch) or ask the user for the relevant reference set instead of asserting priority.

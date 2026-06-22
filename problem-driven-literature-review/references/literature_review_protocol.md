@@ -173,6 +173,27 @@ Use this flow when references must be selected or audited:
 5. Search direct competitors explicitly.
 6. Cite a paper only after confirming that it supports the specific claim.
 
+## 8.5 Reference Metadata Check
+
+Do not treat Google Scholar BibTeX as authoritative. It is often useful for a first export, but it can misclassify conference papers as `@article`, omit DOI, abbreviate authors as `et al.`, lose capitalization braces, use a formatted author string instead of BibTeX `and`, or place venue metadata in the wrong field.
+
+When a `.bib` file or BibTeX block is available, run:
+
+```bash
+python3 problem-driven-literature-review/scripts/check_references.py references.bib
+```
+
+Use stricter checks when finalizing references:
+
+```bash
+python3 problem-driven-literature-review/scripts/check_references.py references.bib --strict
+python3 problem-driven-literature-review/scripts/check_references.py references.bib --online --title-search --strict
+```
+
+The script checks entry structure, duplicate keys and DOIs, required fields by entry type, malformed DOI/URL/year fields, suspicious author separators, `et al.` in author lists, single-hyphen page ranges, Google Scholar source markers such as `[J]`, unprotected title acronyms, and common conference/article field mismatches. With `--online`, it uses DOI metadata from Crossref and can search likely DOIs for entries without one.
+
+If the script flags an entry, do not silently normalize it. Verify against the publisher page, DOI landing page, Crossref, DBLP, PubMed, arXiv, IEEE/ACM/Elsevier/Springer pages, or the target journal's bibliography style before finalizing. Keep unchecked entries marked as candidates.
+
 ## 9. Quality Gates
 
 ### 9.1 Direct Competitor Rule
@@ -220,6 +241,8 @@ If the review criticizes a property, the paper should test, prove, discuss, or e
 - Mark unchecked papers as candidates only.
 - In fast-moving fields, verify recent models, benchmarks, and versions.
 - A citation must support the specific claim in the sentence, not merely relate to the broad topic.
+- BibTeX/reference-list metadata must be checked before final use; Google Scholar BibTeX is a draft export, not an authority.
+- For final references, resolve DOI/title/year/venue/author discrepancies instead of hiding them with manual formatting.
 
 ## 10. Example Use Rules
 
@@ -337,6 +360,7 @@ Before finalizing the review, check:
 - Does the review avoid overcritical `nobody has done this` phrasing?
 - Does every reference have a clear role?
 - Are there no invented, misused, or decorative citations?
+- Have BibTeX or reference-list entries been checked for metadata errors, especially if exported from Google Scholar?
 
 ## 13. Shortest Version
 

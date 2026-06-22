@@ -131,6 +131,8 @@ idea-novelty-auditor/
 
 problem-driven-literature-review/
 |-- SKILL.md
+|-- scripts/
+|   `-- check_references.py
 `-- references/
     `-- literature_review_protocol.md
 
@@ -200,6 +202,17 @@ python3 paper-polisher/scripts/check_preservation.py original.tex polished.tex
 ```
 
 The script reports changed structural TeX keys and numeric tokens. Run it on the original TeX content and the polished TeX content, not on a complete AI response that also contains notes or review comments.
+
+## Reference Metadata Check
+
+For related-work or reference-selection workflows, validate BibTeX before finalizing a bibliography:
+
+```bash
+python3 problem-driven-literature-review/scripts/check_references.py references.bib
+python3 problem-driven-literature-review/scripts/check_references.py references.bib --online --title-search --strict
+```
+
+The checker catches common Google Scholar BibTeX problems such as missing required fields, duplicate DOI/key values, malformed DOI/year/page ranges, `et al.` in author fields, conference papers exported as `@article`, and title capitalization that needs BibTeX braces.
 
 ## License
 

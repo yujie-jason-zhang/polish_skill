@@ -131,6 +131,8 @@ idea-novelty-auditor/
 
 problem-driven-literature-review/
 |-- SKILL.md
+|-- scripts/
+|   `-- check_references.py
 `-- references/
     `-- literature_review_protocol.md
 
@@ -200,6 +202,17 @@ python3 paper-polisher/scripts/check_preservation.py original.tex polished.tex
 ```
 
 该脚本会报告结构性 TeX key 和数值 token 是否变化。它应运行在原始 TeX 内容和润色后 TeX 内容上，不应运行在包含说明、review report 或 notes 的完整 AI 回复上。
+
+## 参考文献元数据检查
+
+在 related work 或参考文献选择流程中，定稿前先检查 BibTeX：
+
+```bash
+python3 problem-driven-literature-review/scripts/check_references.py references.bib
+python3 problem-driven-literature-review/scripts/check_references.py references.bib --online --title-search --strict
+```
+
+该脚本会捕捉 Google Scholar BibTeX 常见问题，例如必填字段缺失、重复 key/DOI、DOI/year/page range 格式异常、author 字段里出现 `et al.`、会议论文被导出成 `@article`，以及标题中的缩写未用 BibTeX 大括号保护。
 
 ## License
 
