@@ -32,7 +32,12 @@ The suite's value is faithful, bounded output, not a competing rewrite. Verify r
 ## Non-Negotiable Rules
 
 - Preserve all TeX structures, equations, environments, citations, labels, references, variables, function names, module names, dataset names, metric names, and technical meanings.
-- Preserve the exact original arguments and keys inside structural commands, including `\label{...}`, `\ref{...}`, `\eqref{...}`, `\cite{...}`, `\citep{...}`, `\citet{...}`, `\bibitem{...}`, and BibTeX entry keys. Do not translate, rename, merge, delete, reorder, or normalize these keys.
+- Preserve the exact original arguments and keys inside structural commands, including `\label{...}`, `\ref{...}`, `\eqref{...}`, `\includegraphics{...}`, `\cite{...}`, `\citep{...}`, `\citet{...}`, `\bibitem{...}`, and BibTeX entry keys. Do not translate, rename, merge, delete, reorder, or normalize these keys.
+- When adding a new table, figure, algorithm, equation, section, or other referenceable object, create a specific semantic label that follows the manuscript's existing label convention. If no clear convention exists, use `type:semantic_name` with these prefixes: `sec:` for sections, `subsec:` for subsections, `fig:` for figures, `tab:` for tables, `eq:` for equations, `alg:` for algorithms, `thm:` for theorems, and `app:` for appendices. Prefer typed labels such as `\label{tab:diff_methods}`, `\label{fig:framework}`, `\label{alg:training}`, or the manuscript's established underscore style such as `\label{tab_diff_methods}`. Never use bare placeholder labels or references such as `\label{tab}`, `\ref{tab}`, `\label{fig}`, `\ref{fig}`, `\label{table}`, `\label{figure}`, `\label{img}`, `\label{image}`, `\label{tmp}`, or `\label{label}`.
+- Treat any user-specified, user-approved, or previously generated new label as protected after it appears. In later full-manuscript generation, preserve that label exactly and update all corresponding references consistently instead of regenerating a generic label.
+- When referring to an existing table, figure, equation, section, algorithm, theorem, or appendix, inspect and use the exact existing label key. For example, if the available labels are `\label{tab:ablation}` and `\label{tab:errors}`, write `Tables~\ref{tab:ablation} and~\ref{tab:errors}`, never `Tables~\ref{tab} and~\ref{tab}`.
+- For newly inserted figures, also treat the image asset path in `\includegraphics{...}` and any user-approved sizing/cropping options as protected. Do not rename image files, replace paths, remove subdirectories, or regenerate a figure block with a generic `\label{fig}` after the user has approved a concrete figure label such as `\label{fig:framework}`.
+- Do not hard-code display numbers for referenceable objects in TeX source. In prose, first identify the target journal or manuscript's established reference-name style, then use it consistently, such as `Fig.~\ref{fig:framework}` for journals that use `Fig.` or `Figure~\ref{fig:framework}` for journals that use `Figure`; preserve an established `\autoref`/`\cref` style when present. Never write hard-coded forms such as `Figure 1`, `Fig. 1`, or `Table 1`. In captions, never write `\caption{Figure 1 ...}`, `\caption{Fig. 1 ...}`, or `\caption{Table 1 ...}`; LaTeX supplies the displayed figure/table name and number automatically, so the caption body should start with the descriptive title.
 - Do not change mathematical definitions, theorem conditions, proof logic, algorithm steps, experimental settings, reported results, baselines, dataset names, numerical values, units, percentages, table entries, figure-reported values, parameter settings, sample sizes, or significance markers.
 - Do not modify bibliography entries, author names, reference-list formatting, BibTeX fields, DOI/URL/arXiv identifiers, venue names, years, pages, or publishers unless the user explicitly asks for reference cleanup after reviewing the issue.
 - Do not invent contributions, claims, experiments, guarantees, deployment value, limitations, or conclusions that are not supported by the source text.
@@ -50,9 +55,10 @@ If your own draft violates a rule, revise the draft to restore compliance withou
 1. Identify the text type: sentence, paragraph, named section, full manuscript, caption/table note, bibliography, or mixed TeX.
 2. Identify each paragraph's local function: background, problem, method, formula explanation, result, discussion, conclusion, or transition.
 3. Build a small terminology ledger for key methods, modules, metrics, variables, abbreviations, datasets, and baselines.
-4. Rewrite in formal, restrained engineering-journal English while preserving all protected TeX structures, keys, data, and technical meaning.
-5. Remove colloquial, subjective, exaggerated, and module-stacking phrasing when this can be done without adding unsupported content.
-6. Run the post-polishing review before responding. If any violation is found, revise first.
+4. When adding or revising referenceable objects, build a small structural ledger for labels and references, especially user-approved new labels and existing table/figure targets, and carry it forward into any full-manuscript output.
+5. Rewrite in formal, restrained engineering-journal English while preserving all protected TeX structures, keys, data, and technical meaning.
+6. Remove colloquial, subjective, exaggerated, and module-stacking phrasing when this can be done without adding unsupported content.
+7. Run the post-polishing review before responding. If any violation is found, revise first.
 
 ## Preservation Script
 
@@ -62,7 +68,17 @@ When both original and polished TeX files are available, run:
 python3 paper-polisher/scripts/check_preservation.py original.tex polished.tex
 ```
 
-Use the script before finalizing full-paper or major-section polishing. Run it only on the original TeX content and the polished TeX content, not on an assistant response that also contains notes or review reports.
+Use this strict mode for pure polishing, translation, or local revision where no new manuscript objects, references, image assets, or numerical tokens should be introduced.
+
+When the user explicitly asks to add new manuscript content, such as a new paragraph, table, figure, reference to an existing table, or response-driven revision text, run additions-aware mode instead:
+
+```bash
+python3 paper-polisher/scripts/check_preservation.py original.tex revised.tex --allow-additions
+```
+
+In additions-aware mode, newly added semantic labels, references, image assets, and numeric tokens are allowed. Missing original TeX keys, missing original numeric tokens, placeholder labels/references such as `\ref{tab}` or `\label{fig}`, and changed existing image paths or sizing/cropping signatures still fail.
+
+Run the script only on the original TeX content and the polished/revised TeX content, not on an assistant response that also contains notes or review reports.
 
 If the script reports changed TeX keys or numeric tokens, revise the polished text or flag the discrepancy explicitly.
 

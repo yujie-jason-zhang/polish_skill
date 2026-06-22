@@ -21,7 +21,7 @@ Always preserve:
 
 - inline and display math, including `$...$`, `\(...\)`, `\[...\]`, `equation`, `align`, `gather`, and similar environments;
 - figure, table, algorithm, theorem, proof, lemma, definition, and remark environments;
-- `\label{...}`, `\ref{...}`, `\eqref{...}`, `\autoref{...}`, `\cref{...}`, `\cite{...}`, `\citep{...}`, `\citet{...}`, `\bibitem{...}`, and BibTeX entry keys;
+- `\label{...}`, `\ref{...}`, `\eqref{...}`, `\autoref{...}`, `\cref{...}`, `\includegraphics{...}`, `\cite{...}`, `\citep{...}`, `\citet{...}`, `\bibitem{...}`, and BibTeX entry keys;
 - variable names, function names, module names, model names, dataset names, metric names, baseline names, and abbreviations;
 - numerical values, units, percentages, sample sizes, parameter settings, table values, figure-reported values, and significance markers.
 
@@ -44,6 +44,94 @@ must not become:
 ```
 
 Do not silently fix suspicious values, inconsistent units, duplicated citations, malformed bibliography entries, or possible author-name order problems. Report them for user review unless the user explicitly authorizes reference or data cleanup.
+
+When adding a new referenceable object, do not create generic placeholder labels. Follow the manuscript's existing label convention and make the key semantically tied to the object:
+
+```latex
+\label{tab:diff_methods}
+\label{fig:framework}
+\label{alg:training}
+```
+
+If there is no clear manuscript convention, use `type:semantic_name`:
+
+| Object type | Prefix | Example |
+|---|---|---|
+| Section | `sec:` | `\label{sec:method}` |
+| Subsection | `subsec:` | `\label{subsec:ablation_setup}` |
+| Figure | `fig:` | `\label{fig:framework}` |
+| Table | `tab:` | `\label{tab:diff_methods}` |
+| Equation | `eq:` | `\label{eq:loss_function}` |
+| Algorithm | `alg:` | `\label{alg:training}` |
+| Theorem | `thm:` | `\label{thm:convergence}` |
+| Appendix | `app:` | `\label{app:implementation}` |
+
+If the manuscript already uses underscore labels, keep that convention:
+
+```latex
+\label{tab_diff_methods}
+\label{fig_framework}
+```
+
+Never emit bare labels or references such as `\label{tab}`, `\ref{tab}`, `\label{fig}`, `\ref{fig}`, `\label{table}`, `\label{figure}`, `\label{img}`, `\label{image}`, `\label{tmp}`, or `\label{label}`. Once the user specifies or approves a new label, treat it as protected in the same way as an original key. In later full-text generation, preserve that label exactly and keep any `\ref`, `\autoref`, or `\cref` targets consistent.
+
+When referring to existing objects, first identify the exact label keys already present in the manuscript. For example, if the table labels are:
+
+```latex
+\label{tab:ablation}
+\label{tab:errors}
+\label{tab:torwic_errors}
+```
+
+then a controlled-indoor-experiment paragraph should refer only to the relevant controlled-indoor tables:
+
+```latex
+Tables~\ref{tab:ablation} and~\ref{tab:errors}
+```
+
+Do not write `Tables~\ref{tab} and~\ref{tab}`, and do not include `\ref{tab:torwic_errors}` unless the sentence is about the TorWIC evaluation.
+
+Do not confuse internal label keys with displayed numbers. A label such as `\label{fig:1}` is acceptable if it is the manuscript's existing convention, but prose should still use a reference command with the target journal or manuscript's established reference-name style:
+
+```latex
+Fig.~\ref{fig:1}
+Figure~\ref{fig:1}
+```
+
+Use `Fig.` or `Figure` according to the target journal template or the manuscript's existing style, and keep that choice consistent across the manuscript. The same applies to styles such as `Eq.` versus `Equation` and `Sec.` versus `Section`. Do not hard-code the displayed number:
+
+```latex
+Figure 1
+Fig. 1
+```
+
+Captions must not include the displayed object name and number, because LaTeX generates them automatically. Use:
+
+```latex
+\caption{Overall framework of the proposed method.}
+```
+
+not:
+
+```latex
+\caption{Figure 1. Overall framework of the proposed method.}
+\caption{Fig. 1. Overall framework of the proposed method.}
+```
+
+The same rule applies to tables, algorithms, equations, sections, and appendices when they are referenced or captioned in TeX source.
+
+For newly inserted figures, protect both the semantic figure label and the image asset reference:
+
+```latex
+\begin{figure}
+  \centering
+  \includegraphics[width=0.85\linewidth]{figures/framework.pdf}
+  \caption{Overall framework of the proposed method.}
+  \label{fig:framework}
+\end{figure}
+```
+
+In later full-text generation, keep `figures/framework.pdf`, the approved sizing/cropping options, and `\label{fig:framework}` unless the user explicitly asks to rename, move, resize, or replace the image. Do not simplify the path to `framework.pdf`, invent a new filename, or fall back to `\label{fig}`.
 
 ## Faithfulness Rules
 
@@ -127,16 +215,19 @@ Useful academic verbs and structures:
 
 1. Identify the core problem, application scenario, technical bottleneck, main method, and main claim from the manuscript.
 2. Build a terminology ledger for methods, modules, datasets, metrics, variables, baselines, and abbreviations.
-3. Polish section by section while preserving source meaning and TeX structures.
-4. Keep cross-section terminology and claim boundaries consistent.
-5. Run the preservation script when original and polished TeX files are available.
-6. Produce the required output mode and review report.
+3. Build a structural ledger for any newly added or user-approved labels, then carry those exact labels into full-text output.
+4. Polish section by section while preserving source meaning and TeX structures.
+5. Keep cross-section terminology and claim boundaries consistent.
+6. Run the preservation script when original and polished TeX files are available. Use strict mode for pure polishing, and use `--allow-additions` only when the user intentionally added new manuscript content, labels, references, image assets, or numeric tokens.
+7. Produce the required output mode and review report.
 
 ## Review Checklist
 
 Before returning, verify:
 
 - TeX commands, environments, protected keys, variables, and math are unchanged.
+- Newly added labels and references are semantic, convention-compatible, and not placeholders.
+- Captions and prose references do not hard-code display numbers such as `Figure 1`; they use LaTeX-generated numbering through labels and reference commands, with reference-name wording (`Fig.`/`Figure`, `Eq.`/`Equation`, etc.) matched to the journal or manuscript style.
 - Numerical values, units, datasets, baselines, metrics, parameter settings, and reported results are unchanged.
 - Bibliography and citation issues are reported rather than silently modified.
 - No unsupported claims, experiments, guarantees, or deployment value were introduced.

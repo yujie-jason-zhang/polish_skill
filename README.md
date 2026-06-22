@@ -19,7 +19,7 @@ The suite is designed for users who already work with manuscript drafts, TeX fil
 
 ## Companion Video
 
-Chinese video: [Article Form 0 to 1](https://www.bilibili.com/video/BV1w9fCBGER1/?share_source=copy_web&vd_source=44f03506210fc8189800dcdfcddae687)
+Chinese video: [Article Form 0 to 1](https://www.bilibili.com/video/BV1w9fCBGER1/)
 
 The video covers a practical paper workflow in three modules:
 
