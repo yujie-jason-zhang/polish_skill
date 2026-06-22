@@ -39,6 +39,10 @@ Verification mode is used when another tool or skill has already produced a draf
 
 This makes the suite useful both as a primary workflow and as a quality-control layer after other AI tools.
 
+## Human Review
+
+Treat all AI-generated edits as draft material. Even when a skill preserves TeX keys, citations, references, numbers, and technical terms, polishing and rewriting can still introduce subtle errors. Before submission or reuse, manually compare substantive changes against the original manuscript and verify technical meaning, numerical values, equations, citation support, reference metadata, and journal-specific formatting.
+
 ## Recommended Workflows
 
 Early-stage idea screening:

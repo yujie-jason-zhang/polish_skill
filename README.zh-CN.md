@@ -39,6 +39,10 @@ B 站视频：[Article Form 0 to 1](https://www.bilibili.com/video/BV1w9fCBGER1/
 
 因此，这套 skill 既可以作为主工作流使用，也可以作为其他 AI 工具后的质量控制层。
 
+## 人工核对
+
+所有 AI 生成的修改都应先视为草稿。即使 skill 已经尽量保留 TeX key、citation、reference、数字和专业术语，润色或改写仍可能引入细微错误。投稿或复用前，建议人工对照原稿核对实质性修改，重点检查技术含义、数值、公式、引用支撑、参考文献元数据和目标期刊格式要求。
+
 ## 推荐工作流
 
 早期 idea 风险审查：
