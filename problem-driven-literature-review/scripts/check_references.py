@@ -57,6 +57,7 @@ YEAR_RE = re.compile(r"\b(1[89]\d{2}|20\d{2}|21\d{2})\b")
 HTML_ENTITY_RE = re.compile(r"&(?:amp|lt|gt|quot|apos|nbsp|[a-zA-Z]+|#\d+);")
 GOOGLE_SCHOLAR_MARKER_RE = re.compile(r"\[[JCMDR]\]")
 UPPERCASE_TOKEN_RE = re.compile(r"\b[A-Z][A-Z0-9+/-]{1,}\b")
+CASE_SENSITIVE_TOKEN_RE = re.compile(r"\b[A-Za-z][A-Za-z0-9]*(?:[-/][A-Za-z0-9]+)*\b")
 URL_RE = re.compile(r"^https?://", re.IGNORECASE)
 CONFERENCE_LIKE_RE = re.compile(
     r"\b(proceedings|conference|symposium|workshop|cvpr|iccv|eccv|neurips|nips|icml|"
@@ -65,6 +66,10 @@ CONFERENCE_LIKE_RE = re.compile(
     re.IGNORECASE,
 )
 ROMAN_NUMERALS = {"II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"}
+DEFAULT_PROTECTED_TITLE_TERMS = (
+    "Monte Carlo",
+    "Reliable-loc",
+)
 
 
 @dataclass(frozen=True)
@@ -401,9 +406,19 @@ def is_in_range(index: int, ranges: list[tuple[int, int]]) -> bool:
     return any(start < index < end for start, end in ranges)
 
 
+def is_single_brace_wrapped(value: str) -> bool:
+    value = value.strip()
+    if len(value) < 2 or value[0] != "{" or value[-1] != "}":
+        return False
+    try:
+        return find_matching_delimiter(value, 0, "{", "}") == len(value) - 1
+    except BibTeXParseError:
+        return False
+
+
 def unprotected_uppercase_tokens(raw_title: str) -> list[str]:
     inner = strip_single_outer_wrapper(raw_title)
-    if inner.startswith("{") and inner.endswith("}"):
+    if is_single_brace_wrapped(inner):
         return []
     ranges = protected_ranges(raw_title)
     tokens: list[str] = []
@@ -416,6 +431,64 @@ def unprotected_uppercase_tokens(raw_title: str) -> list[str]:
         if not is_in_range(match.start(), ranges):
             tokens.append(token)
     return sorted(set(tokens))
+
+
+def needs_case_protection(token: str) -> bool:
+    letters = [char for char in token if char.isalpha()]
+    if not any(char.islower() for char in letters):
+        return False
+    return any(index > 0 and char.isupper() for index, char in enumerate(token))
+
+
+def unprotected_case_sensitive_tokens(raw_title: str) -> list[str]:
+    inner = strip_single_outer_wrapper(raw_title)
+    if is_single_brace_wrapped(inner):
+        return []
+    ranges = protected_ranges(raw_title)
+    tokens: list[str] = []
+    for match in CASE_SENSITIVE_TOKEN_RE.finditer(inner):
+        token = match.group(0)
+        if needs_case_protection(token) and not is_in_range(match.start(), ranges):
+            tokens.append(token)
+    return sorted(set(tokens))
+
+
+def title_term_pattern(term: str) -> re.Pattern[str]:
+    body = r"\s+".join(re.escape(part) for part in term.split())
+    return re.compile(rf"(?<![A-Za-z0-9]){body}(?![A-Za-z0-9])")
+
+
+def unprotected_title_terms(raw_title: str, terms: list[str]) -> list[str]:
+    inner = strip_single_outer_wrapper(raw_title)
+    if is_single_brace_wrapped(inner):
+        return []
+    ranges = protected_ranges(raw_title)
+    missing: list[str] = []
+    for term in terms:
+        pattern = title_term_pattern(term)
+        if any(not is_in_range(match.start(), ranges) for match in pattern.finditer(inner)):
+            missing.append(term)
+    return sorted(set(missing), key=str.lower)
+
+
+def unique_title_terms(terms: list[str]) -> list[str]:
+    unique: list[str] = []
+    seen: set[str] = set()
+    for term in terms:
+        cleaned = re.sub(r"\s+", " ", term.strip())
+        if cleaned and cleaned not in seen:
+            seen.add(cleaned)
+            unique.append(cleaned)
+    return unique
+
+
+def read_title_terms_file(path: Path) -> list[str]:
+    terms: list[str] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if stripped and not stripped.startswith("#"):
+            terms.append(stripped)
+    return terms
 
 
 def normalize_text_for_similarity(text: str) -> str:
@@ -441,7 +514,7 @@ def first_author_surname(author_value: str) -> str:
     return parts[-1].strip().lower() if parts else ""
 
 
-def validate_entries(entries: list[Entry], current_year: int) -> list[Issue]:
+def validate_entries(entries: list[Entry], current_year: int, protected_title_terms: list[str]) -> list[Issue]:
     issues: list[Issue] = []
 
     keys = Counter(entry.key for entry in entries if entry.key)
@@ -498,7 +571,7 @@ def validate_entries(entries: list[Entry], current_year: int) -> list[Issue]:
                         "Remove Google Scholar or database export markers from the title.",
                     )
                 )
-            acronyms = unprotected_uppercase_tokens(title.raw)
+            acronyms = sorted(set(unprotected_uppercase_tokens(title.raw) + unprotected_case_sensitive_tokens(title.raw)))
             if acronyms:
                 shown = ", ".join(acronyms[:5])
                 suffix = "" if len(acronyms) <= 5 else f", ... {len(acronyms) - 5} more"
@@ -509,7 +582,21 @@ def validate_entries(entries: list[Entry], current_year: int) -> list[Issue]:
                         entry.key,
                         title.line,
                         f"title may need brace-protected capitalization: {shown}{suffix}",
-                        "Protect acronyms or proper nouns as {MPC}, {CNN}, {IEEE}, etc.",
+                        "Protect acronyms, mixed-case terms, or proper nouns as {MPC}, {CNN}, {IEEE}, {LiDAR}, etc.",
+                    )
+                )
+            terms = [term for term in unprotected_title_terms(title.raw, protected_title_terms) if term not in acronyms]
+            if terms:
+                shown = ", ".join(terms[:5])
+                suffix = "" if len(terms) <= 5 else f", ... {len(terms) - 5} more"
+                issues.append(
+                    Issue(
+                        "WARN",
+                        "unprotected-title-term",
+                        entry.key,
+                        title.line,
+                        f"title may need brace-protected term: {shown}{suffix}",
+                        "Protect known case-sensitive phrases or method names as {Monte Carlo}, {Reliable-loc}, etc.",
                     )
                 )
 
@@ -850,6 +937,18 @@ def main() -> int:
     parser.add_argument("--timeout", type=float, default=8.0, help="Crossref request timeout in seconds")
     parser.add_argument("--strict", action="store_true", help="Return a failing exit code for warnings as well as errors")
     parser.add_argument("--limit", type=int, default=80, help="Maximum number of issues to print")
+    parser.add_argument(
+        "--protected-title-term",
+        action="append",
+        default=[],
+        metavar="TERM",
+        help="Add a case-sensitive title phrase or method name that should be brace-protected",
+    )
+    parser.add_argument(
+        "--protected-title-terms-file",
+        type=Path,
+        help="Read additional brace-protected title terms from a UTF-8 text file, one term per line",
+    )
     args = parser.parse_args()
 
     try:
@@ -858,8 +957,18 @@ def main() -> int:
         print(f"Error reading input file: {exc}", file=sys.stderr)
         return 2
 
+    protected_title_terms = list(DEFAULT_PROTECTED_TITLE_TERMS)
+    if args.protected_title_terms_file:
+        try:
+            protected_title_terms.extend(read_title_terms_file(args.protected_title_terms_file))
+        except OSError as exc:
+            print(f"Error reading protected title terms file: {exc}", file=sys.stderr)
+            return 2
+    protected_title_terms.extend(args.protected_title_term)
+    protected_title_terms = unique_title_terms(protected_title_terms)
+
     entries, parse_issues = parse_bibtex(text)
-    issues = parse_issues + validate_entries(entries, date.today().year)
+    issues = parse_issues + validate_entries(entries, date.today().year, protected_title_terms)
     if args.online:
         issues.extend(validate_against_crossref(entries, args.title_search, args.mailto, args.timeout))
 

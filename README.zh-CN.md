@@ -216,7 +216,15 @@ python3 problem-driven-literature-review/scripts/check_references.py references.
 python3 problem-driven-literature-review/scripts/check_references.py references.bib --online --title-search --strict
 ```
 
-该脚本会捕捉 Google Scholar BibTeX 常见问题，例如必填字段缺失、重复 key/DOI、DOI/year/page range 格式异常、author 字段里出现 `et al.`、会议论文被导出成 `@article`，以及标题中的缩写未用 BibTeX 大括号保护。
+如需检查项目自己的方法名或必须保留大小写的专有名，可以额外指定术语：
+
+```bash
+python3 problem-driven-literature-review/scripts/check_references.py references.bib \
+  --protected-title-term "Reliable-loc" \
+  --protected-title-term "Monte Carlo"
+```
+
+该脚本会捕捉 Google Scholar BibTeX 常见问题，例如必填字段缺失、重复 key/DOI、DOI/year/page range 格式异常、author 字段里出现 `et al.`、会议论文被导出成 `@article`，以及标题中需要 BibTeX 大括号保护的大小写，包括全大写缩写、`LiDAR` 这类 mixed-case 术语，以及 `Monte Carlo` 或方法名这类已配置 title 术语。
 
 ## License
 

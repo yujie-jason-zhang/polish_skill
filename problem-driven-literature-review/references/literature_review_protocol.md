@@ -190,7 +190,17 @@ python3 problem-driven-literature-review/scripts/check_references.py references.
 python3 problem-driven-literature-review/scripts/check_references.py references.bib --online --title-search --strict
 ```
 
-The script checks entry structure, duplicate keys and DOIs, required fields by entry type, malformed DOI/URL/year fields, suspicious author separators, `et al.` in author lists, single-hyphen page ranges, Google Scholar source markers such as `[J]`, unprotected title acronyms, and common conference/article field mismatches. With `--online`, it uses DOI metadata from Crossref and can search likely DOIs for entries without one.
+When the project has method names or proper nouns that must preserve capitalization, add them to the title-term check:
+
+```bash
+python3 problem-driven-literature-review/scripts/check_references.py references.bib \
+  --protected-title-term "Reliable-loc" \
+  --protected-title-term "Monte Carlo"
+```
+
+For longer project vocabularies, put one term per line in a UTF-8 text file and pass `--protected-title-terms-file terms.txt`.
+
+The script checks entry structure, duplicate keys and DOIs, required fields by entry type, malformed DOI/URL/year fields, suspicious author separators, `et al.` in author lists, single-hyphen page ranges, Google Scholar source markers such as `[J]`, unprotected title acronyms, unprotected mixed-case terms such as `LiDAR`, configured title terms such as `Monte Carlo` or method names, and common conference/article field mismatches. With `--online`, it uses DOI metadata from Crossref and can search likely DOIs for entries without one.
 
 If the script flags an entry, do not silently normalize it. Verify against the publisher page, DOI landing page, Crossref, DBLP, PubMed, arXiv, IEEE/ACM/Elsevier/Springer pages, or the target journal's bibliography style before finalizing. Keep unchecked entries marked as candidates.
 

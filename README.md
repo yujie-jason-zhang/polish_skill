@@ -216,7 +216,15 @@ python3 problem-driven-literature-review/scripts/check_references.py references.
 python3 problem-driven-literature-review/scripts/check_references.py references.bib --online --title-search --strict
 ```
 
-The checker catches common Google Scholar BibTeX problems such as missing required fields, duplicate DOI/key values, malformed DOI/year/page ranges, `et al.` in author fields, conference papers exported as `@article`, and title capitalization that needs BibTeX braces.
+Add project-specific method names or proper nouns that must preserve capitalization:
+
+```bash
+python3 problem-driven-literature-review/scripts/check_references.py references.bib \
+  --protected-title-term "Reliable-loc" \
+  --protected-title-term "Monte Carlo"
+```
+
+The checker catches common Google Scholar BibTeX problems such as missing required fields, duplicate DOI/key values, malformed DOI/year/page ranges, `et al.` in author fields, conference papers exported as `@article`, and title capitalization that needs BibTeX braces, including all-caps acronyms, mixed-case terms such as `LiDAR`, and configured title terms such as `Monte Carlo` or method names.
 
 ## License
 
