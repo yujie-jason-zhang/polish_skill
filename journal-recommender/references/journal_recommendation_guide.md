@@ -7,6 +7,7 @@
 - Intake question bank
 - Estimating the paper's level
 - The four tiers
+- Field-top reference candidates
 - Fact verification and source authority
 - Predatory and early-warning red flags
 - Fit rationale template
@@ -23,7 +24,7 @@ This is a matching task, not a science review and not a sales pitch. It reuses t
 ## Core principle
 
 ```text
-gather hard constraints -> estimate level -> match scope -> drop clear constraint failures -> build a finalist pool -> verify each listed journal's official site + LetPub + source-authority records -> verify recent related papers in the journal -> screen for red flags -> sort into tiers -> explain fit, list URLs, related-paper evidence, and how to adjust
+gather hard constraints -> estimate level -> match scope -> drop clear constraint failures -> build a finalist pool -> verify each listed journal's official site + LetPub + source-authority records -> verify recent related papers in the journal -> screen for red flags -> sort into tiers -> optionally add field-top reference candidates outside the tiers -> explain fit, list URLs, related-paper evidence, and how to adjust
 ```
 
 This skill is online-only: every recommended journal is verified live against its official website, its LetPub page, and recent papers in that journal related to the manuscript field. Nothing is recommended from memory; if no web/search/browsing tool is available, say so and stop.
@@ -32,6 +33,7 @@ Two failure modes to avoid:
 
 - fabrication: inventing journals, URLs, or related-paper evidence, or asserting indexing, quartile, impact metric, APC, or review speed that the live pages do not support. Review speed is the least reliable field, so take it from LetPub and attribute it;
 - over-reach: labeling a venue "reach" when the level gap is large, so the user wastes a submission cycle.
+- prestige drift: using cross-field prestige titles as generic "top recommendations." The top-reference lane should usually name field-specific high-visibility venues close to the manuscript's discipline, not Nature/Science/Cell-family style journals unless the user explicitly asks for that level or the manuscript evidence genuinely supports it.
 
 ## Intake question bank
 
@@ -82,6 +84,25 @@ The tiers cross two axes: ambition (reach vs safe) and review speed (fast vs nor
 A venue can legitimately appear in two tiers (e.g., a safe venue that also reviews fast belongs in both "safe" and "fast-review safe"). That is fine; note it rather than duplicating the full rationale.
 
 Do not use the manuscript's current formatting template to assign the venue family. A paper drafted in an IEEE LaTeX template can still be a good fit for Elsevier, Springer Nature, Wiley, Taylor & Francis, MDPI, society, or university-press journals after reformatting. Treat template mismatch as an operational reformatting task after target selection, not as scope or level evidence.
+
+## Field-top reference candidates
+
+Add an optional "Field-top reference candidates (outside the four tiers)" lane when it helps the user understand the ceiling of the direction. This lane is a calibration reference, not a fifth tier, not an acceptance prediction, and not part of the four-tier shortlist. Include at most 1-3 venues.
+
+Choose candidates with all of the following discipline:
+
+- The venue is a recognized high-visibility destination in the manuscript's actual subfield: a flagship society journal, leading transactions journal, elite subfield journal, or equivalent field-native venue.
+- The venue is usually only about half a step to one step above the "Reach" tier. If the level gap is several steps, omit it or label it explicitly unrealistic rather than presenting it as a useful target.
+- The venue's scope and recent contents match the manuscript's topic closely enough that a strengthened version of the paper could be legible there.
+- The venue has been verified with the same official-site, LetPub, indexing, recent-related-paper, and red-flag checks as the four tiers.
+
+Do not default to cross-field mega-journals, broad prestige brands, or unrelated clinical/biomedical/physical-science titles just because they are famous. For example, an engineering or robotics manuscript's top-reference lane should usually be built from field-native flagship venues, not generic Nature/Science/Cell-family targets. If the user specifically asks for those ultra-high-risk targets, present them separately as "ultra-long-shot prestige venues" and make the gap explicit.
+
+For each field-top candidate, write:
+
+- why it is top for this direction, grounded in scope and recent contents;
+- current realism: realistic stretch / long-shot / unrealistic;
+- what must be strengthened before attempting it: e.g., stronger theory, a decisive benchmark, broader baselines, ablations, real-system deployment, clinical/field validation, larger dataset, reproducibility package, or audience reframing.
 
 ## Fact verification and source authority
 
@@ -164,6 +185,15 @@ Constraints (as gathered / assumed):
 Estimated paper level (estimate):
 - <band> — basis: <one line>
 
+Field-top reference candidates (outside the four tiers; optional):
+- <Journal> — indexing <...> · OA/APC <...> · speed <band + LetPub figure>
+  Official site: <URL, or "not found">
+  LetPub: <URL, or "not found">
+  Recent related papers: <1-3 representative papers with year + DOI/URL, or "no close recent match found">
+  Why top for this direction: <field-specific reason, not generic prestige>
+  Current realism: <realistic stretch / long-shot / unrealistic> because <specific gap>
+  What to strengthen before attempting: <concrete evidence, experiment, validation, theory, dataset, or framing>
+
 Each tier: aim for about 10 entries; if fewer genuine verified fits exist, state why the tier is thin.
 
 Reach (可冲):
@@ -207,6 +237,16 @@ Intake (as gathered):
 - inputs: full paper; solid real-world experiments, one moderate methodological novelty, beats two standard baselines; user's anchor: "we usually land around Q2."
 
 Estimated level (estimate): mid-tier (≈ Q2), based on a moderate novelty plus strong deployment results, consistent with the user's anchor. Low-to-moderate confidence without the full manuscript.
+
+Field-top reference candidates (outside the four tiers):
+
+- <Field-native robotics flagship venue> — indexing <confirmed> · <subscription/OA status from site> · speed <band + LetPub-reported first-decision time>.
+  Official site: <journal-site URL opened>
+  LetPub: <LetPub page URL opened>
+  Recent related papers: <1-3 recent articles in this venue on LiDAR localization / point-cloud registration / field robotics, with year + DOI/URL>.
+  Why top for this direction: recognized high-visibility destination for robotics systems and autonomy work, with recent contents close to the manuscript's technical audience.
+  Current realism: long-shot, because the described manuscript has solid deployment evidence but only moderate methodological novelty.
+  What to strengthen before attempting: add a decisive benchmark against stronger current baselines, deeper failure-case analysis, and broader real-world deployment evidence before treating this as a main target.
 
 Reach (可冲):
 

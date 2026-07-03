@@ -1,7 +1,7 @@
 ---
 name: journal-recommender
 description: >-
-  Recommend target journals for a finished or near-finished manuscript. Use when the user asks where to submit, wants a shortlist, checks fit for a journal, compares SCI/non-SCI, OA/subscription, Chinese/English, fast-review venues, or asks which journals are realistic. Gather indexing, OA/budget, language, deadline, avoid-list, subfield, keywords, abstract/results, article type, and level anchor; estimate paper level; then return about 10 journals each in reach, fast-review reach, safe, and fast-review safe tiers. Each journal must include a fit rationale, recent related-paper evidence from that journal, official-site and LetPub URLs, and an adjustment note when borderline. Web search is mandatory: verify the journal site, LetPub page, and recent related papers live, not from memory. Use before paper-cover-letter.
+  Recommend target journals for a finished or near-finished manuscript. Use when the user asks where to submit, wants a shortlist, checks fit for a journal, compares SCI/non-SCI, OA/subscription, Chinese/English, fast-review venues, or asks which journals are realistic. Gather indexing, OA/budget, language, deadline, avoid-list, subfield, keywords, abstract/results, article type, and level anchor; estimate paper level; then return about 10 journals each in reach, fast-review reach, safe, and fast-review safe tiers, plus 1-3 field-top reference candidates outside the four tiers when useful. Each journal must include a fit rationale, recent related-paper evidence from that journal, official-site and LetPub URLs, and an adjustment note when borderline. Web search is mandatory: verify the journal site, LetPub page, and recent related papers live, not from memory. Use before paper-cover-letter.
 ---
 
 # Journal Recommender
@@ -45,6 +45,7 @@ Journal metadata is the single most fabrication-prone part of this task, and the
 - **Review speed is the least reliable dimension.** Report the LetPub-reported turnaround with attribution and its URL, plus a qualitative band (fast / moderate / slow); note that crowd-sourced data is indicative, not guaranteed, and do not assert a precise figure the sources do not support.
 - **Screen for predatory and early-warning venues.** Before listing any journal — especially fast, open-access, or high-APC ones — check for red flags (aggressive solicitation, fabricated metrics, no clear peer review, claims of open access without a DOAJ listing, hijacked/clone journals, or presence on the CAS international early-warning list, 中科院国际期刊预警名单). Flag or exclude them; never recommend a venue you would not defend to the user's advisor.
 - **Level judgments are estimates, not verdicts.** Base the reach/safe split on an explicit, hedged read of the paper's level from what the user provides, state the basis, and recommend the user calibrate with an advisor. Do not present "reach" as attainable when the gap is large — label it honestly.
+- **Field-top candidates are a reference lane, not a fifth tier.** If useful, add 1-3 direction-specific high-visibility venues outside the four tiers. Choose realistic field flagships or leading society/transactions venues for the manuscript's actual subfield, not default cross-field mega-journals such as Nature/Science/Cell-family titles unless the user explicitly asks for that level or the manuscript evidence genuinely warrants it. State the gap and what would need to improve before attempting them.
 - **Coverage without padding.** For a full recommendation, aim for about 10 journals per tier, but every listed journal must be a genuine scope-and-level fit with a real rationale. When a tier is thin — "fast-review reach" often is, because more selective venues frequently review slowly — say so and explain why rather than inserting weak fits.
 
 ## Rule-Conflict Escalation
@@ -83,8 +84,9 @@ Paper-fit inputs (these set scope and level):
 7. Use the recent-paper evidence to re-evaluate scope fit: keep strong/moderate fits, downgrade borderline fits, and exclude journals whose recent contents show little connection to the manuscript unless there is a clear strategic reason to keep them with a caution.
 8. Screen the survivors for predatory and early-warning red flags; exclude or flag.
 9. Sort into the four tiers by combining the paper's estimated level with each venue's selectivity, its LetPub-reported review speed, and the strength of its recent related-paper evidence.
-10. For each journal, write the fit rationale (scope + recent-content evidence + level + constraint match), attach its official-site and LetPub URLs (the real ones from step 5; write "not found" if either was missing), include representative related papers from step 6, and, when the fit is borderline, a concrete adjustment note.
-11. Assemble the output: constraints echo, level estimate, the four tiers (about 10 entries per tier when genuine verified fits exist, each carrying both URLs and related-paper evidence), and a red-flag section. Point the user to `paper-cover-letter` for the chosen venue.
+10. Optionally identify 1-3 field-top reference candidates outside the four tiers. Keep them direction-specific and realistically adjacent to the user's field; do not default to cross-field prestige titles. Verify them with the same official-site, LetPub, indexing, and recent-related-paper checks before listing.
+11. For each journal, write the fit rationale (scope + recent-content evidence + level + constraint match), attach its official-site and LetPub URLs (the real ones from step 5; write "not found" if either was missing), include representative related papers from step 6, and, when the fit is borderline, a concrete adjustment note.
+12. Assemble the output: constraints echo, level estimate, optional field-top reference candidates, the four tiers (about 10 entries per tier when genuine verified fits exist, each carrying both URLs and related-paper evidence), and a red-flag section. Point the user to `paper-cover-letter` for the chosen venue.
 
 ## The Four Tiers
 
@@ -94,6 +96,18 @@ The tiers cross two axes — ambition and review speed. For a full recommendatio
 - **Fast-review reach (审稿快的可冲):** reach-level venues that also tend to turn around quickly. State honestly when this tier is thin — selective venues often review slowly — instead of padding it.
 - **Safe (稳的):** venues at or slightly below the paper's level where acceptance is more likely. The dependable fallback.
 - **Fast-review safe (快速审稿稳的):** safe-tier venues with fast turnaround — the bucket for a hard deadline. Reliable-and-fast sometimes means large open-access journals, which is fine when legitimate (DOAJ-listed), but screen these hardest for predatory red flags and always surface the APC.
+
+## Field-Top Reference Candidates
+
+Add this lane only when it helps the user calibrate ambition. It is not a fifth tier and does not replace the four-tier recommendation. Include at most 1-3 venues.
+
+Use field-specific top venues that a strong version of the manuscript's own discipline might plausibly aspire to: flagship society journals, leading transactions, or highly selective subfield journals. Avoid reflexively listing cross-field mega-journals or biomedical/physical-science prestige titles when the manuscript is an engineering, CS, social-science, or applied-domain paper. The candidate should usually be above "reach" by about half a step to one step, not several levels away.
+
+For each candidate, state:
+
+- why it is a top reference for this direction;
+- whether it is currently realistic, long-shot, or unrealistic for the provided manuscript;
+- the concrete missing evidence, experiment, theory, validation, dataset, clinical/field deployment, or framing needed before attempting it.
 
 ## Fact Verification
 
@@ -128,6 +142,15 @@ Constraints (as gathered / assumed):
 
 Estimated paper level (estimate):
 - level band + one-line basis
+
+Field-top reference candidates (outside the four tiers; optional):
+- Journal — indexing · OA/APC · review speed [band + LetPub-reported figure]
+  Official site: <real URL, or "not found">
+  LetPub: <real URL, or "not found">
+  Recent related papers: <1-3 representative papers with year + DOI/URL, or "no close recent match found">
+  Why top for this direction: <field-specific reason>
+  Current realism: <realistic stretch / long-shot / unrealistic> because <gap>
+  What to strengthen before attempting: <concrete evidence or framing change>
 
 Each tier: aim for about 10 entries; if fewer genuine verified fits exist, state why the tier is thin.
 
