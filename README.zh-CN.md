@@ -2,7 +2,7 @@
 
 语言：[English](README.md) | [简体中文](README.zh-CN.md)
 
-Academic Paper Skills 是一组面向学术论文写作、投稿和返修流程的本地 AI agent 技能。仓库按任务边界拆成七个独立 skill，每个 skill 都有明确的适用范围、检验模式和保全规则。
+Academic Paper Skills 是一组面向学术论文写作、投稿和返修流程的本地 AI agent 技能。仓库按任务边界拆成八个独立 skill，每个 skill 都有明确的适用范围、检验模式和保全规则。
 
 它面向已经在处理论文草稿、TeX 文件、审稿意见、投稿信和期刊格式要求的用户；目标不是做一个泛化的“论文助手”，而是把论文工作流中容易失真、过度声称或漏改的部分拆成可复用的专业流程。
 
@@ -13,6 +13,7 @@ Academic Paper Skills 是一组面向学术论文写作、投稿和返修流程�
 | `idea-novelty-auditor` | 研究想法、贡献陈述或论文主线在包装前需要做新颖性风险审查。 | 新颖性风险、危险基线、审稿人攻击点、可防守的主张边界、所需实验。 |
 | `problem-driven-literature-review` | 文献综述、相关工作、引言背景、研究缺口或引用计划需要重构。 | 问题驱动的综述逻辑、S-R-L-H-G-M-C-V 工作表、参考文献角色、缺口与贡献映射。 |
 | `paper-argument-reconstructor` | 已有草稿，但摘要、引言、章节逻辑、方法叙述或实验支撑关系不清楚。 | 章节逻辑重构、贡献表达、论文主线诊断、论文结构调整建议。 |
+| `experiment-section-auditor` | 实验章节、消融计划或结果叙述需要根据既定 claims 和真实资源限制做审计。 | Claim-evidence map、最小实验或消融缺口、冗余实验删减建议、结果叙述问题、可行性免责声明。 |
 | `paper-polisher` | 中文或英文 TeX 论文文本需要忠实的学术英文润色或局部修改。 | TeX-safe 润色稿、术语一致性检查、保真报告、可选本地保全检查。 |
 | `journal-recommender` | 已完成或接近完成的论文需要推荐目标期刊、快速审稿选项，或验证已有期刊 shortlist 是否合适。 | 四档期刊推荐，包含官网、LetPub、索引、预警风险和期刊近期相关文章证据。 |
 | `paper-cover-letter` | 论文基本定稿，需要写期刊投稿信。 | 投稿信、受论文证据约束的贡献陈述、期刊范围匹配说明、未确认信息占位。 |
@@ -27,7 +28,7 @@ B 站视频：[Article Form 0 to 1](https://www.bilibili.com/video/BV1w9fCBGER1/
 | 视频模块 | 与本仓库的对应关系 |
 |---|---|
 | 找期刊 | 在 `paper-cover-letter` 之前使用 `journal-recommender`，根据期刊范围、论文层级、索引、开放获取/预算、审稿速度、预警风险和期刊近期相关文章证据缩小目标期刊。不要根据当前 LaTeX 模板推断目标出版社；选定期刊后再重排格式。 |
-| LaTeX 与论文结构 | 论文结构部分对应 `paper-argument-reconstructor`，用于处理章节逻辑、贡献表达和实验支撑关系；LaTeX 保全部分对应 `paper-polisher`，用于 TeX-safe 润色和保全检查。具体格式仍以目标期刊模板和投稿指南为准。 |
+| LaTeX 与论文结构 | 论文结构部分对应 `paper-argument-reconstructor`，用于处理章节逻辑和贡献表达；实验章节对应 `experiment-section-auditor`，用于审计实验集合最小性、消融充分性和结果叙述；LaTeX 保全部分对应 `paper-polisher`，用于 TeX-safe 润色和保全检查。具体格式仍以目标期刊模板和投稿指南为准。 |
 | 回复审稿意见 | 对应 `paper-response-to-reviewers`。该 skill 用于拆分审稿意见、先制定修改计划、再撰写逐条回复，并核对每一个承诺的改动是否真的出现在修订稿中。 |
 
 ## 运行方式
@@ -61,7 +62,13 @@ problem-driven-literature-review -> paper-argument-reconstructor -> paper-polish
 完整论文准备：
 
 ```text
-idea-novelty-auditor -> problem-driven-literature-review -> paper-argument-reconstructor -> paper-polisher
+idea-novelty-auditor -> problem-driven-literature-review -> paper-argument-reconstructor -> experiment-section-auditor -> paper-polisher
+```
+
+实验章节审计：
+
+```text
+paper-argument-reconstructor / idea-novelty-auditor 确定 claims -> experiment-section-auditor -> paper-polisher
 ```
 
 期刊投稿材料：
@@ -91,7 +98,7 @@ cd polish_skill
 
 ```bash
 mkdir -p ~/.codex/skills
-cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.codex/skills/
+cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.codex/skills/
 ```
 
 只安装单个 skill：
@@ -107,7 +114,7 @@ cp -r paper-polisher ~/.codex/skills/
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.claude/skills/
+cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.claude/skills/
 ```
 
 如果只在某个项目中使用，把需要的 skill 文件夹复制到目标项目的 `.claude/skills/` 目录即可。
@@ -117,7 +124,7 @@ cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-recon
 对于支持上传 skill、项目文件或知识文件的平台，可以打包全部 skill：
 
 ```bash
-zip -r academic-paper-skills.zip idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers
+zip -r academic-paper-skills.zip idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers
 ```
 
 也可以只打包单个 skill：
@@ -146,6 +153,11 @@ paper-argument-reconstructor/
 `-- references/
     |-- argument_reconstruction.md
     `-- argument_reconstruction_zh.md
+
+experiment-section-auditor/
+|-- SKILL.md
+`-- references/
+    `-- experiment_section_guide.md
 
 paper-polisher/
 |-- SKILL.md
@@ -189,6 +201,12 @@ TeX-safe 润色：
 
 ```text
 使用 paper-polisher 将这段 TeX 润色成正式工程期刊英文。请保留公式、label、ref、citation、变量、数字和技术含义。
+```
+
+实验章节审计：
+
+```text
+使用 experiment-section-auditor 根据论文 claims 审计这段实验章节。请指出 unsupported claims、不必要实验、缺失消融、流水账式结果叙述，以及在我已说明资源条件下的可行性假设。
 ```
 
 期刊推荐：

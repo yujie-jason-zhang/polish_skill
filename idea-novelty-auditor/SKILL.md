@@ -1,6 +1,6 @@
 ---
 name: idea-novelty-auditor
-description: Audit research ideas, contribution statements, manuscript positioning, and proposed paper storylines for novelty risk before packaging. Use for comparing an idea against classic algorithmic paradigms, direct related work, adjacent fields, dangerous baselines, reviewer attacks, defensible claim boundaries, required experiments, ablation design, and deciding whether an idea can support a short paper, conference paper, or journal paper.
+description: Audit research ideas, contribution statements, manuscript positioning, and proposed paper storylines for novelty risk before packaging. Use for comparing an idea against classic algorithmic paradigms, direct related work, adjacent fields, dangerous baselines, reviewer attacks, defensible claim boundaries, required experiments, ablation design, and deciding whether an idea can support a short paper, conference paper, or journal paper. Defer audit of an existing experiment section or concrete experiment plan against fixed claims and stated resources to experiment-section-auditor.
 ---
 
 # Idea Novelty Auditor
@@ -16,6 +16,7 @@ Use another skill when the task is primarily:
 - literature review, related work, reference selection, citation-role assignment, or direct-competitor coverage after the idea boundary is known: use `problem-driven-literature-review` (if available);
 - manuscript structure or section rewriting after the defensible claims are known: use `paper-argument-reconstructor` (if available);
 - TeX-safe academic English polishing: use `paper-polisher` (if available).
+- auditing an existing experiment section or concrete experiment plan against fixed claims, ablations, resource constraints, and results narration: use `experiment-section-auditor` (if available).
 
 If the user asks for "packaging" before novelty has been checked, run the novelty-risk audit first.
 

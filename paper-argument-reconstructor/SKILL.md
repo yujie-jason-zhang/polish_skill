@@ -1,6 +1,6 @@
 ---
 name: paper-argument-reconstructor
-description: Diagnose, restructure, or rewrite academic manuscript arguments into a problem-driven paper storyline. Use for abstracts, introductions, methodology narratives, formula explanations, theory/proof exposition, experiments, results, discussion, conclusions, contribution statements, section outlines, and full-paper diagnosis when the main task is argument design rather than pure language polishing, literature-review construction, or novelty-risk auditing.
+description: Diagnose, restructure, or rewrite academic manuscript arguments into a problem-driven paper storyline. Use for abstracts, introductions, methodology narratives, formula explanations, theory/proof exposition, experiments, results, discussion, conclusions, contribution statements, section outlines, and full-paper diagnosis when the main task is argument design rather than pure language polishing, literature-review construction, novelty-risk auditing, or audit-only experiment-section checking. Defer experiment-set minimality, ablation sufficiency, feasibility-against-resources, and results-narration audits to experiment-section-auditor.
 ---
 
 # Paper Argument Reconstructor
@@ -16,6 +16,7 @@ Use another skill when the task is primarily:
 - TeX-safe expression polishing, proofreading, translation, or preservation checking: use `paper-polisher` (if available);
 - idea novelty risk, dangerous baselines, reviewer attacks, or whether a contribution is defensible before manuscript writing: use `idea-novelty-auditor` (if available);
 - literature review, related work, introduction background, research-gap synthesis, reference selection, citation-role assignment, or direct-competitor coverage: use `problem-driven-literature-review` (if available).
+- audit-only checks of experiment-set minimality, ablation sufficiency, feasibility against stated resources, or report-style results narration: use `experiment-section-auditor` (if available).
 
 If the user asks for novelty audit, literature review, and manuscript reconstruction together, use `idea-novelty-auditor` (if available) first, then `problem-driven-literature-review` (if available), then reconstruct only the defensible claims.
 

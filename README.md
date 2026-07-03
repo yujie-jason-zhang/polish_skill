@@ -2,7 +2,7 @@
 
 Languages: [English](README.md) | [简体中文](README.zh-CN.md)
 
-Academic Paper Skills is a set of local AI-agent skills for manuscript preparation and revision. The repository is organized around seven narrow skills, each with explicit scope boundaries, verification behavior, and preservation rules.
+Academic Paper Skills is a set of local AI-agent skills for manuscript preparation and revision. The repository is organized around eight narrow skills, each with explicit scope boundaries, verification behavior, and preservation rules.
 
 The suite is designed for users who already work with manuscript drafts, TeX files, reviewer comments, and journal submission material. It does not try to be a single general paper-writing assistant.
 
@@ -13,6 +13,7 @@ The suite is designed for users who already work with manuscript drafts, TeX fil
 | `idea-novelty-auditor` | A research idea, contribution claim, or paper storyline needs novelty-risk review before packaging. | Novelty-risk audit, dangerous baselines, reviewer attack points, defensible claim boundaries, required validation. |
 | `problem-driven-literature-review` | A literature review, related work section, introduction background, research gap, or citation plan needs structure. | Problem-driven review logic, S-R-L-H-G-M-C-V worksheet, reference roles, gap and contribution mapping. |
 | `paper-argument-reconstructor` | A draft exists, but the abstract, introduction, section logic, method narrative, or experiment-to-claim relation is weak. | Rebuilt section logic, contribution framing, storyline diagnosis, revised manuscript structure. |
+| `experiment-section-auditor` | An experiment section, ablation plan, or results writeup needs an audit against fixed claims and real resource limits. | Claim-evidence map, minimal experiment or ablation gaps, padding cuts, results-narration issues, feasibility disclaimer. |
 | `paper-polisher` | Chinese or English TeX manuscript text needs faithful academic English polishing or local revision. | TeX-safe polished text, terminology consistency, fidelity review, optional preservation check. |
 | `journal-recommender` | A finished or near-finished manuscript needs realistic target journals, fast-review options, or fit verification for a journal shortlist. | Four-tier journal shortlist with live official-site, LetPub, indexing, red-flag, and recent related-paper evidence. |
 | `paper-cover-letter` | The manuscript is ready for submission and needs a journal cover letter. | Submission cover letter with bounded contribution claims, scope-fit argument, placeholders for unconfirmed details. |
@@ -27,7 +28,7 @@ The video covers a practical paper workflow in three modules:
 | Video Module | Repository Mapping |
 |---|---|
 | Journal selection | Use `journal-recommender` before `paper-cover-letter` to narrow target venues by scope, level, indexing, OA/budget, review speed, red flags, and recent related-paper evidence. Do not infer the target venue from the current LaTeX template; reformat after choosing the journal. |
-| LaTeX formatting and manuscript structure | Use `paper-argument-reconstructor` for section logic, contribution framing, and experiment-to-claim alignment; use `paper-polisher` for TeX-safe language polishing and preservation checks. Journal-specific LaTeX formatting still follows the target journal template. |
+| LaTeX formatting and manuscript structure | Use `paper-argument-reconstructor` for section logic and contribution framing; use `experiment-section-auditor` for experiment-set minimality, ablation sufficiency, and results narration; use `paper-polisher` for TeX-safe language polishing and preservation checks. Journal-specific LaTeX formatting still follows the target journal template. |
 | Response to reviewers | Use `paper-response-to-reviewers` after reviews arrive. The skill separates comments, plans manuscript revisions before claiming changes, drafts point-by-point replies, and checks that every promised edit exists in the revised manuscript. |
 
 ## Operating Model
@@ -61,7 +62,13 @@ problem-driven-literature-review -> paper-argument-reconstructor -> paper-polish
 Full manuscript preparation:
 
 ```text
-idea-novelty-auditor -> problem-driven-literature-review -> paper-argument-reconstructor -> paper-polisher
+idea-novelty-auditor -> problem-driven-literature-review -> paper-argument-reconstructor -> experiment-section-auditor -> paper-polisher
+```
+
+Experiment section audit:
+
+```text
+paper-argument-reconstructor / idea-novelty-auditor claims -> experiment-section-auditor -> paper-polisher
 ```
 
 Journal submission package:
@@ -91,7 +98,7 @@ Install all skills:
 
 ```bash
 mkdir -p ~/.codex/skills
-cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.codex/skills/
+cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.codex/skills/
 ```
 
 Install one skill:
@@ -107,7 +114,7 @@ Install all skills as personal skills:
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.claude/skills/
+cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.claude/skills/
 ```
 
 For project-level use, copy the required skill folders into the target project's `.claude/skills/` directory.
@@ -117,7 +124,7 @@ For project-level use, copy the required skill folders into the target project's
 For platforms that accept uploaded skills, project files, or knowledge files:
 
 ```bash
-zip -r academic-paper-skills.zip idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers
+zip -r academic-paper-skills.zip idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers
 ```
 
 Package one skill:
@@ -146,6 +153,11 @@ paper-argument-reconstructor/
 `-- references/
     |-- argument_reconstruction.md
     `-- argument_reconstruction_zh.md
+
+experiment-section-auditor/
+|-- SKILL.md
+`-- references/
+    `-- experiment_section_guide.md
 
 paper-polisher/
 |-- SKILL.md
@@ -189,6 +201,12 @@ TeX-safe polishing:
 
 ```text
 Use paper-polisher to polish this TeX section into formal engineering-journal English. Preserve equations, labels, references, citations, variables, numbers, and technical meaning.
+```
+
+Experiment section audit:
+
+```text
+Use experiment-section-auditor to audit this experiment section against the paper's claims. Flag unsupported claims, unnecessary experiments, missing ablations, report-style results narration, and feasibility assumptions under my stated resources.
 ```
 
 Journal recommendation:
