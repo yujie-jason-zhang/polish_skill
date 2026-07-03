@@ -2,7 +2,7 @@
 
 Languages: [English](README.md) | [简体中文](README.zh-CN.md)
 
-Academic Paper Skills is a set of local AI-agent skills for manuscript preparation and revision. The repository is organized around six narrow skills, each with explicit scope boundaries, verification behavior, and preservation rules.
+Academic Paper Skills is a set of local AI-agent skills for manuscript preparation and revision. The repository is organized around seven narrow skills, each with explicit scope boundaries, verification behavior, and preservation rules.
 
 The suite is designed for users who already work with manuscript drafts, TeX files, reviewer comments, and journal submission material. It does not try to be a single general paper-writing assistant.
 
@@ -14,6 +14,7 @@ The suite is designed for users who already work with manuscript drafts, TeX fil
 | `problem-driven-literature-review` | A literature review, related work section, introduction background, research gap, or citation plan needs structure. | Problem-driven review logic, S-R-L-H-G-M-C-V worksheet, reference roles, gap and contribution mapping. |
 | `paper-argument-reconstructor` | A draft exists, but the abstract, introduction, section logic, method narrative, or experiment-to-claim relation is weak. | Rebuilt section logic, contribution framing, storyline diagnosis, revised manuscript structure. |
 | `paper-polisher` | Chinese or English TeX manuscript text needs faithful academic English polishing or local revision. | TeX-safe polished text, terminology consistency, fidelity review, optional preservation check. |
+| `journal-recommender` | A finished or near-finished manuscript needs realistic target journals, fast-review options, or fit verification for a journal shortlist. | Four-tier journal shortlist with live official-site, LetPub, indexing, red-flag, and recent related-paper evidence. |
 | `paper-cover-letter` | The manuscript is ready for submission and needs a journal cover letter. | Submission cover letter with bounded contribution claims, scope-fit argument, placeholders for unconfirmed details. |
 | `paper-response-to-reviewers` | Reviewer or editor comments need a revision plan and point-by-point response. | Comment decomposition, severity/evidence grading, revision plan, response letter, consistency audit. |
 
@@ -25,7 +26,7 @@ The video covers a practical paper workflow in three modules:
 
 | Video Module | Repository Mapping |
 |---|---|
-| Journal selection | Use before `paper-cover-letter`. The skills assume the target journal is known or narrowed down; use the journal-selection workflow to decide fit, article type, scope, and submission constraints before drafting the cover letter. |
+| Journal selection | Use `journal-recommender` before `paper-cover-letter` to narrow target venues by scope, level, indexing, OA/budget, review speed, red flags, and recent related-paper evidence. Do not infer the target venue from the current LaTeX template; reformat after choosing the journal. |
 | LaTeX formatting and manuscript structure | Use `paper-argument-reconstructor` for section logic, contribution framing, and experiment-to-claim alignment; use `paper-polisher` for TeX-safe language polishing and preservation checks. Journal-specific LaTeX formatting still follows the target journal template. |
 | Response to reviewers | Use `paper-response-to-reviewers` after reviews arrive. The skill separates comments, plans manuscript revisions before claiming changes, drafts point-by-point replies, and checks that every promised edit exists in the revised manuscript. |
 
@@ -66,7 +67,7 @@ idea-novelty-auditor -> problem-driven-literature-review -> paper-argument-recon
 Journal submission package:
 
 ```text
-target journal selected -> paper-cover-letter -> paper-polisher
+journal-recommender -> paper-cover-letter -> paper-polisher
 ```
 
 Revision after peer review:
@@ -90,7 +91,7 @@ Install all skills:
 
 ```bash
 mkdir -p ~/.codex/skills
-cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher paper-cover-letter paper-response-to-reviewers ~/.codex/skills/
+cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.codex/skills/
 ```
 
 Install one skill:
@@ -106,7 +107,7 @@ Install all skills as personal skills:
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher paper-cover-letter paper-response-to-reviewers ~/.claude/skills/
+cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.claude/skills/
 ```
 
 For project-level use, copy the required skill folders into the target project's `.claude/skills/` directory.
@@ -116,7 +117,7 @@ For project-level use, copy the required skill folders into the target project's
 For platforms that accept uploaded skills, project files, or knowledge files:
 
 ```bash
-zip -r academic-paper-skills.zip idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher paper-cover-letter paper-response-to-reviewers
+zip -r academic-paper-skills.zip idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers
 ```
 
 Package one skill:
@@ -159,6 +160,11 @@ paper-cover-letter/
 `-- references/
     `-- cover_letter_guide.md
 
+journal-recommender/
+|-- SKILL.md
+`-- references/
+    `-- journal_recommendation_guide.md
+
 paper-response-to-reviewers/
 |-- SKILL.md
 `-- references/
@@ -183,6 +189,12 @@ TeX-safe polishing:
 
 ```text
 Use paper-polisher to polish this TeX section into formal engineering-journal English. Preserve equations, labels, references, citations, variables, numbers, and technical meaning.
+```
+
+Journal recommendation:
+
+```text
+Use journal-recommender to recommend target journals for this finished manuscript. Verify official sites, LetPub, indexing, OA/APC, red flags, and recent related papers in each journal; do not decide by the current LaTeX template.
 ```
 
 Response to reviewers:
