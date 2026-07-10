@@ -46,7 +46,7 @@ If the user asks the letter to assert an ethics fact, a novelty claim, or a scop
 
 1. Confirm the target journal, manuscript title, article type, and submission stage (new, resubmission, or revision).
 2. Pull the core problem and contributions from the manuscript or from `paper-argument-reconstructor` output. Do not re-derive or inflate them.
-3. Choose a length register: concise (a few sentences) or detailed (mechanism, effect, and readership). Default to the journal's norm or the user's preference.
+3. Choose a length register: concise (a few sentences) or detailed (mechanism, effect, and readership). Default to concise. Use detailed only when the user explicitly requests it or a confirmed journal requirement or norm calls for a fuller letter.
 4. Assemble the moves in order, inserting a placeholder for every unconfirmed fact.
 5. Run the pre-send check: no overclaim, ethics statements confirmed or placeheld, scope-fit naming the actual journal, no fabricated specifics.
 6. If the user wants a final language pass, hand the assembled letter to `paper-polisher`.

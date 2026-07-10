@@ -122,6 +122,8 @@ Best regards,
 
 Both registers keep the same claim strength. Length changes the detail, not the certainty.
 
+Default to the concise register. Use the detailed register only when the user explicitly asks for it or a confirmed journal requirement or norm calls for a fuller letter. Do not choose the detailed register merely because the manuscript provides enough material to fill it.
+
 ## Placeholder Discipline
 
 Always leave a placeholder, never a guess, for:
