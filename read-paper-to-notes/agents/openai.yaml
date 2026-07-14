@@ -1,0 +1,4 @@
+interface:
+  display_name: "Read Paper to Notes"
+  short_description: "Turn research PDFs into grounded Markdown notes"
+  default_prompt: "Use $read-paper-to-notes to read the attached research paper PDF and create a faithful, evidence-anchored Markdown note."

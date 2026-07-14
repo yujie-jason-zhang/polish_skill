@@ -2,14 +2,15 @@
 
 语言：[English](README.md) | [简体中文](README.zh-CN.md)
 
-Academic Paper Skills 是一组面向学术论文写作、投稿和返修流程的本地 AI agent 技能。仓库按任务边界拆成八个独立 skill，每个 skill 都有明确的适用范围、检验模式和保全规则。
+Academic Paper Skills 是一组面向论文精读、学术写作、投稿和返修流程的本地 AI agent 技能。仓库按任务边界拆成九个独立 skill，每个 skill 都有明确的适用范围、证据边界、检验模式或保全规则。
 
-它面向已经在处理论文草稿、TeX 文件、审稿意见、投稿信和期刊格式要求的用户；目标不是做一个泛化的“论文助手”，而是把论文工作流中容易失真、过度声称或漏改的部分拆成可复用的专业流程。
+它面向需要处理论文 PDF、论文草稿、TeX 文件、审稿意见、投稿信和期刊格式要求的用户；目标不是做一个泛化的“论文助手”，而是把论文工作流中容易失真、过度声称或漏改的部分拆成可复用的专业流程。
 
 ## Skill 目录
 
 | Skill | 适用场景 | 主要输出 |
 |---|---|---|
+| `read-paper-to-notes` | 已提供一篇学术论文 PDF，需要精读、解释或整理成结构化笔记。 | 带证据定位的 Markdown 精读笔记，覆盖问题、方法、公式、实验、结果、局限和研究启发。 |
 | `idea-novelty-auditor` | 研究想法、贡献陈述或论文主线在包装前需要做新颖性风险审查。 | 新颖性风险、危险基线、审稿人攻击点、可防守的主张边界、所需实验。 |
 | `problem-driven-literature-review` | 文献综述、相关工作、引言背景、研究缺口或引用计划需要重构。 | 问题驱动的综述逻辑、S-R-L-H-G-M-C-V 工作表、参考文献角色、缺口与贡献映射。 |
 | `paper-argument-reconstructor` | 已有草稿，但摘要、引言、章节逻辑、方法叙述或实验支撑关系不清楚。 | 章节逻辑重构、贡献表达、论文主线诊断、论文结构调整建议。 |
@@ -33,7 +34,7 @@ B 站视频：[Article Form 0 to 1](https://www.bilibili.com/video/BV1w9fCBGER1/
 
 ## 运行方式
 
-每个 skill 都支持两种模式。
+大多数起草和审计类 skill 支持两种模式。
 
 默认是生成模式：根据各自范围进行起草、修改、审查或规划。
 
@@ -41,11 +42,19 @@ B 站视频：[Article Form 0 to 1](https://www.bilibili.com/video/BV1w9fCBGER1/
 
 因此，这套 skill 既可以作为主工作流使用，也可以作为其他 AI 工具后的质量控制层。
 
+`read-paper-to-notes` 则区分完整精读、聚焦分析和外部核验三种模式。它默认以用户提供的论文为证据边界，并明确标记阅读推断和外部核验信息。
+
 ## 人工核对
 
-所有 AI 生成的修改都应先视为草稿。即使 skill 已经尽量保留 TeX key、citation、reference、数字和专业术语，润色或改写仍可能引入细微错误。投稿或复用前，建议人工对照原稿核对实质性修改，重点检查技术含义、数值、公式、引用支撑、参考文献元数据和目标期刊格式要求。
+所有 AI 生成的笔记和修改都应先视为草稿。即使 skill 已经应用证据或保全规则，阅读、润色和改写仍可能引入细微错误。投稿或复用前，建议人工对照源论文或原稿核对实质性内容，重点检查技术含义、数值、公式、引用支撑、参考文献元数据和目标期刊格式要求。
 
 ## 推荐工作流
+
+单篇论文精读：
+
+```text
+论文 PDF -> read-paper-to-notes -> Markdown 笔记
+```
 
 早期想法风险审查：
 
@@ -98,7 +107,7 @@ cd polish_skill
 
 ```bash
 mkdir -p ~/.codex/skills
-cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.codex/skills/
+cp -r read-paper-to-notes idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.codex/skills/
 ```
 
 只安装单个 skill：
@@ -114,7 +123,7 @@ cp -r paper-polisher ~/.codex/skills/
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.claude/skills/
+cp -r read-paper-to-notes idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.claude/skills/
 ```
 
 如果只在某个项目中使用，把需要的 skill 文件夹复制到目标项目的 `.claude/skills/` 目录即可。
@@ -124,7 +133,7 @@ cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-recon
 对于支持上传 skill、项目文件或知识文件的平台，可以打包全部 skill：
 
 ```bash
-zip -r academic-paper-skills.zip idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers
+zip -r academic-paper-skills.zip read-paper-to-notes idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers
 ```
 
 也可以只打包单个 skill：
@@ -136,6 +145,15 @@ zip -r paper-polisher.zip paper-polisher
 ## 项目结构
 
 ```text
+read-paper-to-notes/
+|-- SKILL.md
+|-- agents/
+|   `-- openai.yaml
+|-- assets/
+|   `-- paper-note-template.md
+`-- references/
+    `-- reading_protocol.md
+
 idea-novelty-auditor/
 |-- SKILL.md
 `-- references/
@@ -184,6 +202,12 @@ paper-response-to-reviewers/
 ```
 
 ## 提示词示例
+
+单篇论文精读：
+
+```text
+使用 read-paper-to-notes 精读附件中的论文并生成中文 Markdown 笔记。请区分作者陈述、阅读推断和外部核验信息，并为重要结论标注页码、章节、公式、图或表格位置。
+```
 
 新颖性风险审查：
 

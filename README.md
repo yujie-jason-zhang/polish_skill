@@ -2,14 +2,15 @@
 
 Languages: [English](README.md) | [简体中文](README.zh-CN.md)
 
-Academic Paper Skills is a set of local AI-agent skills for manuscript preparation and revision. The repository is organized around eight narrow skills, each with explicit scope boundaries, verification behavior, and preservation rules.
+Academic Paper Skills is a set of local AI-agent skills for paper reading, manuscript preparation, and revision. The repository is organized around nine narrow skills, each with explicit scope boundaries, evidence behavior, verification behavior, or preservation rules.
 
-The suite is designed for users who already work with manuscript drafts, TeX files, reviewer comments, and journal submission material. It does not try to be a single general paper-writing assistant.
+The suite is designed for users who work with research-paper PDFs, manuscript drafts, TeX files, reviewer comments, and journal submission material. It does not try to be a single general paper-writing assistant.
 
 ## Skill Catalog
 
 | Skill | Use When | Primary Output |
 |---|---|---|
+| `read-paper-to-notes` | A supplied academic-paper PDF needs close reading, explanation, or conversion into a structured note. | Evidence-anchored Markdown note covering the problem, method, equations, experiments, results, limitations, and research implications. |
 | `idea-novelty-auditor` | A research idea, contribution claim, or paper storyline needs novelty-risk review before packaging. | Novelty-risk audit, dangerous baselines, reviewer attack points, defensible claim boundaries, required validation. |
 | `problem-driven-literature-review` | A literature review, related work section, introduction background, research gap, or citation plan needs structure. | Problem-driven review logic, S-R-L-H-G-M-C-V worksheet, reference roles, gap and contribution mapping. |
 | `paper-argument-reconstructor` | A draft exists, but the abstract, introduction, section logic, method narrative, or experiment-to-claim relation is weak. | Rebuilt section logic, contribution framing, storyline diagnosis, revised manuscript structure. |
@@ -33,7 +34,7 @@ The video covers a practical paper workflow in three modules:
 
 ## Operating Model
 
-Each skill supports two modes.
+Most drafting and auditing skills support two modes.
 
 Generation mode is the default. The skill drafts, revises, audits, or plans according to its scope.
 
@@ -41,11 +42,19 @@ Verification mode is used when another tool or skill has already produced a draf
 
 This makes the suite useful both as a primary workflow and as a quality-control layer after other AI tools.
 
+`read-paper-to-notes` instead separates full-note, focused-analysis, and verified-enrichment modes. It uses the supplied paper as the default evidence boundary and labels any reader inference or externally verified addition.
+
 ## Human Review
 
-Treat all AI-generated edits as draft material. Even when a skill preserves TeX keys, citations, references, numbers, and technical terms, polishing and rewriting can still introduce subtle errors. Before submission or reuse, manually compare substantive changes against the original manuscript and verify technical meaning, numerical values, equations, citation support, reference metadata, and journal-specific formatting.
+Treat all AI-generated notes and edits as draft material. Reading, polishing, and rewriting can still introduce subtle errors even when a skill applies evidence or preservation rules. Before submission or reuse, manually compare substantive content against the source paper or manuscript and verify technical meaning, numerical values, equations, citation support, reference metadata, and journal-specific formatting.
 
 ## Recommended Workflows
+
+Single-paper deep reading:
+
+```text
+research-paper PDF -> read-paper-to-notes -> Markdown note
+```
 
 Early-stage idea screening:
 
@@ -98,7 +107,7 @@ Install all skills:
 
 ```bash
 mkdir -p ~/.codex/skills
-cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.codex/skills/
+cp -r read-paper-to-notes idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.codex/skills/
 ```
 
 Install one skill:
@@ -114,7 +123,7 @@ Install all skills as personal skills:
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -r idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.claude/skills/
+cp -r read-paper-to-notes idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers ~/.claude/skills/
 ```
 
 For project-level use, copy the required skill folders into the target project's `.claude/skills/` directory.
@@ -124,7 +133,7 @@ For project-level use, copy the required skill folders into the target project's
 For platforms that accept uploaded skills, project files, or knowledge files:
 
 ```bash
-zip -r academic-paper-skills.zip idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers
+zip -r academic-paper-skills.zip read-paper-to-notes idea-novelty-auditor problem-driven-literature-review paper-argument-reconstructor experiment-section-auditor paper-polisher journal-recommender paper-cover-letter paper-response-to-reviewers
 ```
 
 Package one skill:
@@ -136,6 +145,15 @@ zip -r paper-polisher.zip paper-polisher
 ## Repository Layout
 
 ```text
+read-paper-to-notes/
+|-- SKILL.md
+|-- agents/
+|   `-- openai.yaml
+|-- assets/
+|   `-- paper-note-template.md
+`-- references/
+    `-- reading_protocol.md
+
 idea-novelty-auditor/
 |-- SKILL.md
 `-- references/
@@ -184,6 +202,12 @@ paper-response-to-reviewers/
 ```
 
 ## Prompt Examples
+
+Single-paper deep reading:
+
+```text
+Use read-paper-to-notes to read the attached paper and create a Chinese Markdown note. Distinguish author statements, reader inferences, and externally verified facts, and anchor important claims to pages, sections, equations, figures, or tables.
+```
 
 Novelty audit:
 
