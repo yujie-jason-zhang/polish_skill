@@ -1,7 +1,7 @@
 ---
 name: journal-recommender
 description: >-
-  Recommend target journals for a finished or near-finished manuscript. Use when the user asks where to submit, wants a shortlist, checks fit for a journal, compares SCI/non-SCI, OA/subscription, Chinese/English, fast-review venues, or asks which journals are realistic. Gather indexing, OA/budget, language, deadline, avoid-list, subfield, keywords, abstract/results, article type, and level anchor; estimate paper level; then return about 10 journals each in reach, fast-review reach, safe, and fast-review safe tiers, plus 1-3 field-top reference candidates outside the four tiers when useful. Each journal must include a fit rationale, recent related-paper evidence from that journal, official-site and LetPub URLs, and an adjustment note when borderline. Web search is mandatory: verify the journal site, LetPub page, and recent related papers live, not from memory. Use before paper-cover-letter.
+  Recommend target journals for a finished or near-finished manuscript. Use when the user asks where to submit, wants a shortlist, checks fit for a journal, compares SCI/non-SCI, OA/subscription, Chinese/English, fast-review venues, or asks which journals are realistic. Gather indexing, OA/budget, language, deadline, avoid-list, subfield, keywords, abstract/results, article type, and level anchor; estimate paper level; then return about 10 journals each in reach, fast-review reach, safe, and fast-review safe tiers, plus 1-3 field-top reference candidates outside the four tiers when useful. Each journal must include a fit rationale, recent related-paper evidence from that journal, official-site and mainland-China Simplified-Chinese LetPub (`letpub.com.cn`) URLs, and an adjustment note when borderline. Web search is mandatory: verify the journal site, the mainland-China Simplified-Chinese LetPub page, and recent related papers live, not from memory. Use before paper-cover-letter.
 ---
 
 # Journal Recommender
@@ -36,12 +36,12 @@ The suite's value is bounded, verifiable recommendations, not a competing list. 
 
 Journal metadata is the single most fabrication-prone part of this task, and the two dimensions the user usually cares most about — how ambitious a venue is and how fast it reviews — are the two the model is most likely to get wrong. Hold the line:
 
-- **Web search is mandatory. Do not recommend from memory.** Every journal in the output must have been verified live in this session. For each one, search and open its official website *and* its LetPub page before listing it, and base the facts on those pages. If no web/search/browsing tool is available, say so and stop — do not fall back to recalled facts.
+- **Web search is mandatory. Do not recommend from memory.** Every journal in the output must have been verified live in this session. For each one, search and open its official website *and* its mainland-China Simplified-Chinese LetPub journal page on `letpub.com.cn` before listing it, and base the facts on those pages. A Traditional-Chinese/Taiwan page on `letpub.tw` or an English page on `letpub.com` does **not** satisfy the LetPub requirement and must not be used as a substitute. If no web/search/browsing tool is available, say so and stop — do not fall back to recalled facts.
 - **Do not invent journals.** Recommend only venues you have found and verified. Never fabricate a journal name, ISSN, or publisher to fill a tier.
 - **Do not choose by manuscript template.** The current LaTeX/Word template, class file, citation style, or visible publisher format is not evidence that the paper must target that publisher or society. A manuscript written in an IEEE template can still be submitted to Elsevier, Springer Nature, Wiley, Taylor & Francis, MDPI, society journals, or other venues after reformatting. Use template information only as a later reformatting note, unless the user states a publisher or venue is a hard constraint.
 - **Verify every fact against the sources, and prefer bands over false precision.** Confirm indexing, quartiles, Impact Factor/JIF, CiteScore, 中科院分区, 北大核心/CSSCI/CSCD, APC/page fees, and article types from the authoritative sources in the guide: journal site for scope, article types, and fees; Clarivate/JCR or Scopus for indexing and metrics; official Chinese/CAS catalogs where relevant; LetPub for review speed and other LetPub-reported signals. These drift year to year and journals get delisted, so trust live sources, not memory. Give the year of any metric.
 - **Verify recent content fit.** For every journal in the final output, search the journal's own archive/site and at least one scholarly index for recent articles matching the manuscript's subfield and keywords. Use this as evidence for scope fit: 3+ close recent papers is strong evidence, 1-2 related papers is moderate, none is a weak-fit warning unless the aims & scope clearly supports the topic. Do not rely on generic aims & scope alone when recent contents suggest the journal rarely publishes the field.
-- **Never invent URLs.** List only the real URLs you actually landed on. A LetPub journal link carries an internal id you cannot know from memory, so take it from the search result rather than constructing it. If you cannot find a journal's official site or its LetPub page, write "not found" instead of guessing one.
+- **Never invent URLs.** List only the real URLs you actually landed on. A LetPub journal link carries an internal id you cannot know from memory, so take it from the search result rather than constructing it. If you cannot find a journal's official site or a qualifying mainland-China Simplified-Chinese LetPub page on `letpub.com.cn`/`www.letpub.com.cn`, write "not found" instead of guessing one or substituting `letpub.tw`/`letpub.com`.
 - **Review speed is the least reliable dimension.** Report the LetPub-reported turnaround with attribution and its URL, plus a qualitative band (fast / moderate / slow); note that crowd-sourced data is indicative, not guaranteed, and do not assert a precise figure the sources do not support.
 - **Screen for predatory and early-warning venues.** Before listing any journal — especially fast, open-access, or high-APC ones — check for red flags (aggressive solicitation, fabricated metrics, no clear peer review, claims of open access without a DOAJ listing, hijacked/clone journals, or presence on the CAS international early-warning list, 中科院国际期刊预警名单). Flag or exclude them; never recommend a venue you would not defend to the user's advisor.
 - **Level judgments are estimates, not verdicts.** Base the reach/safe split on an explicit, hedged read of the paper's level from what the user provides, state the basis, and recommend the user calibrate with an advisor. Do not present "reach" as attainable when the gap is large — label it honestly.
@@ -79,13 +79,13 @@ Paper-fit inputs (these set scope and level):
 2. Estimate the paper's level (hedged) from significance, novelty, rigor, completeness of results, baselines beaten, and the user's anchor. Reuse `idea-novelty-auditor` output if it exists. State the basis in one or two lines.
 3. Build a broad candidate set of venues whose aims and scope match the subfield and keywords, then drop any that clearly fail a hard constraint (wrong indexing, OA/budget mismatch, wrong language, on the avoid-list). Do not drop or prefer venues merely because the manuscript is currently written in a particular publisher or society template.
 4. Narrow the broad set into a finalist pool large enough to support about 10 genuine entries per tier after verification losses. If the field or constraints make that unrealistic, keep only defensible finalists and state that the tier is thin.
-5. For every finalist that may appear in the final list, web-search and open its official website and its LetPub page. Take aims & scope, article types, and APC/page fees from the official site; take review speed and LetPub-reported signals from LetPub; confirm indexing and metrics on the authoritative sources in the guide, including Master Journal List/JCR, Scopus, DOAJ, and official Chinese/CAS catalogs where relevant. Record the real URLs you land on.
+5. For every finalist that may appear in the final list, web-search and open its official website and its mainland-China Simplified-Chinese LetPub journal page on `letpub.com.cn`. Search with the journal title and/or ISSN plus `site:letpub.com.cn`; verify that the opened journal-detail page uses `letpub.com.cn` or `www.letpub.com.cn` and is in Simplified Chinese (`lang=zh` where supported). Reject `letpub.tw` and English `letpub.com` results. Take aims & scope, article types, and APC/page fees from the official site; take review speed and LetPub-reported signals from the qualifying LetPub page; confirm indexing and metrics on the authoritative sources in the guide, including Master Journal List/JCR, Scopus, DOAJ, and official Chinese/CAS catalogs where relevant. Record the real URLs you land on. If no qualifying `letpub.com.cn` journal page can be found, record `not found`; do not replace it with another regional or English LetPub site.
 6. For every finalist that may appear in the final list, search for recent papers in that journal using the manuscript's subfield and 3-6 keywords, plus broader synonyms if needed. Prefer the journal's own archive/search, then PubMed/Crossref/OpenAlex/Semantic Scholar/discipline databases or another available scholarly search source. Record 1-3 representative related articles with year and DOI/URL, or write "no close recent match found" when none is found.
 7. Use the recent-paper evidence to re-evaluate scope fit: keep strong/moderate fits, downgrade borderline fits, and exclude journals whose recent contents show little connection to the manuscript unless there is a clear strategic reason to keep them with a caution.
 8. Screen the survivors for predatory and early-warning red flags; exclude or flag.
 9. Sort into the four tiers by combining the paper's estimated level with each venue's selectivity, its LetPub-reported review speed, and the strength of its recent related-paper evidence.
-10. Optionally identify 1-3 field-top reference candidates outside the four tiers. Keep them direction-specific and realistically adjacent to the user's field; do not default to cross-field prestige titles. Verify them with the same official-site, LetPub, indexing, and recent-related-paper checks before listing.
-11. For each journal, write the fit rationale (scope + recent-content evidence + level + constraint match), attach its official-site and LetPub URLs (the real ones from step 5; write "not found" if either was missing), include representative related papers from step 6, and, when the fit is borderline, a concrete adjustment note.
+10. Optionally identify 1-3 field-top reference candidates outside the four tiers. Keep them direction-specific and realistically adjacent to the user's field; do not default to cross-field prestige titles. Verify them with the same official-site, qualifying mainland-China Simplified-Chinese LetPub, indexing, and recent-related-paper checks before listing.
+11. For each journal, write the fit rationale (scope + recent-content evidence + level + constraint match), attach its official-site URL and qualifying mainland-China Simplified-Chinese LetPub URL (the real ones from step 5; write "not found" if either was missing), include representative related papers from step 6, and, when the fit is borderline, a concrete adjustment note.
 12. Assemble the output: constraints echo, level estimate, optional field-top reference candidates, the four tiers (about 10 entries per tier when genuine verified fits exist, each carrying both URLs and related-paper evidence), and a red-flag section. Point the user to `paper-cover-letter` for the chosen venue.
 
 ## The Four Tiers
@@ -113,10 +113,10 @@ For each candidate, state:
 
 This skill requires web search. Do not produce recommendations from recalled facts; if no web/search/browsing tool is available, say so and stop. See the source-authority table in the guide for what each source is authoritative for.
 
-For every journal you list, you must have opened both:
+For every journal you list, you must have searched for and opened both:
 
 - its **official website** — for indexing claims, aims & scope, article types, and APC/page fees;
-- its **LetPub page** — for review-speed signal and LetPub-reported 中科院分区, impact metric, or acceptance-rate data. LetPub aggregates and crowd-sources these, so attribute the figures to LetPub and prefer primary metric sources when available.
+- its **mainland-China Simplified-Chinese LetPub journal page on `letpub.com.cn`** — for review-speed signal and LetPub-reported 中科院分区, impact metric, or acceptance-rate data. Confirm that the opened page uses `letpub.com.cn` or `www.letpub.com.cn` and displays Simplified-Chinese content (`lang=zh` where supported). Do not accept `letpub.tw` (Taiwan/Traditional Chinese) or `letpub.com` (English) as the required LetPub source. LetPub aggregates and crowd-sources these data, so attribute the figures to LetPub and prefer primary metric sources when available.
 
 Also confirm indexing on the Clarivate Master Journal List and/or the Scopus source list, open-access legitimacy on DOAJ, and screen against the CAS international early-warning list (中科院国际期刊预警名单).
 
@@ -127,7 +127,7 @@ For every journal you list, also verify **recent related-paper evidence**:
 - Prefer the most recent 3-5 years unless the field is slow-moving; include 1-3 representative article titles with year and DOI/URL.
 - Treat the result as fit evidence, not a mechanical pass/fail: no close recent match is a warning, while several close matches strengthen scope fit.
 
-List the real URLs you actually landed on. Never construct or guess a URL — a LetPub journal link carries an internal id you cannot know from memory, so take it from the search result. If you cannot find a journal's official site or its LetPub page, write "not found" rather than inventing one.
+List the real URLs you actually landed on. Never construct or guess a URL — a LetPub journal link carries an internal id you cannot know from memory, so take it from the search result. If you cannot find a journal's official site or a qualifying `letpub.com.cn` Simplified-Chinese journal page, write "not found" rather than inventing one or substituting `letpub.tw`/`letpub.com`.
 
 For review speed: report the LetPub-reported turnaround with attribution and its URL, plus a qualitative band (fast / moderate / slow). Note that crowd-sourced data is indicative, not guaranteed; do not assert a precise figure the sources do not support.
 
@@ -146,7 +146,7 @@ Estimated paper level (estimate):
 Field-top reference candidates (outside the four tiers; optional):
 - Journal — indexing · OA/APC · review speed [band + LetPub-reported figure]
   Official site: <real URL, or "not found">
-  LetPub: <real URL, or "not found">
+  LetPub (mainland China, Simplified Chinese): <real letpub.com.cn URL, or "not found">
   Recent related papers: <1-3 representative papers with year + DOI/URL, or "no close recent match found">
   Why top for this direction: <field-specific reason>
   Current realism: <realistic stretch / long-shot / unrealistic> because <gap>
@@ -157,7 +157,7 @@ Each tier: aim for about 10 entries; if fewer genuine verified fits exist, state
 Reach (可冲):
 - Journal — indexing · OA/APC · review speed [band + LetPub-reported figure]
   Official site: <real URL, or "not found">
-  LetPub: <real URL, or "not found">
+  LetPub (mainland China, Simplified Chinese): <real letpub.com.cn URL, or "not found">
   Recent related papers: <1-3 representative papers with year + DOI/URL, or "no close recent match found">
   Fit: scope + recent-content evidence + level + constraint match
   Adjust if borderline: concrete change that would improve fit
@@ -178,6 +178,6 @@ Next step:
 - pick a target, then use paper-cover-letter.
 ```
 
-Every journal entry carries its official-site and LetPub URLs. Facts come from those live pages, not memory.
+Every journal entry carries its official-site URL and its mainland-China Simplified-Chinese LetPub URL (or `not found`). Facts come from those live pages, not memory.
 
 For a single-journal fit check, return only the scope/level/constraint match, the verification flags, and — if borderline — the adjustment that would make it fit.

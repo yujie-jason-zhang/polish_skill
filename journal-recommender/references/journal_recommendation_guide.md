@@ -24,10 +24,10 @@ This is a matching task, not a science review and not a sales pitch. It reuses t
 ## Core principle
 
 ```text
-gather hard constraints -> estimate level -> match scope -> drop clear constraint failures -> build a finalist pool -> verify each listed journal's official site + LetPub + source-authority records -> verify recent related papers in the journal -> screen for red flags -> sort into tiers -> optionally add field-top reference candidates outside the tiers -> explain fit, list URLs, related-paper evidence, and how to adjust
+gather hard constraints -> estimate level -> match scope -> drop clear constraint failures -> build a finalist pool -> verify each listed journal's official site + mainland-China Simplified-Chinese LetPub page + source-authority records -> verify recent related papers in the journal -> screen for red flags -> sort into tiers -> optionally add field-top reference candidates outside the tiers -> explain fit, list URLs, related-paper evidence, and how to adjust
 ```
 
-This skill is online-only: every recommended journal is verified live against its official website, its LetPub page, and recent papers in that journal related to the manuscript field. Nothing is recommended from memory; if no web/search/browsing tool is available, say so and stop.
+This skill is online-only: every recommended journal is verified live against its official website, its mainland-China Simplified-Chinese LetPub journal page on `letpub.com.cn`, and recent papers in that journal related to the manuscript field. A `letpub.tw` Taiwan/Traditional-Chinese page or a `letpub.com` English page cannot satisfy or replace this LetPub check. Nothing is recommended from memory; if no web/search/browsing tool is available, say so and stop.
 
 Two failure modes to avoid:
 
@@ -94,7 +94,7 @@ Choose candidates with all of the following discipline:
 - The venue is a recognized high-visibility destination in the manuscript's actual subfield: a flagship society journal, leading transactions journal, elite subfield journal, or equivalent field-native venue.
 - The venue is usually only about half a step to one step above the "Reach" tier. If the level gap is several steps, omit it or label it explicitly unrealistic rather than presenting it as a useful target.
 - The venue's scope and recent contents match the manuscript's topic closely enough that a strengthened version of the paper could be legible there.
-- The venue has been verified with the same official-site, LetPub, indexing, recent-related-paper, and red-flag checks as the four tiers.
+- The venue has been verified with the same official-site, qualifying mainland-China Simplified-Chinese LetPub, indexing, recent-related-paper, and red-flag checks as the four tiers.
 
 Do not default to cross-field mega-journals, broad prestige brands, or unrelated clinical/biomedical/physical-science titles just because they are famous. For example, an engineering or robotics manuscript's top-reference lane should usually be built from field-native flagship venues, not generic Nature/Science/Cell-family targets. If the user specifically asks for those ultra-high-risk targets, present them separately as "ultra-long-shot prestige venues" and make the gap explicit.
 
@@ -106,7 +106,9 @@ For each field-top candidate, write:
 
 ## Fact verification and source authority
 
-This skill requires web search. For every journal you list, open its **official website** and its **LetPub page** first; the table below shows which source is authoritative for each fact. Do not recommend from memory; if no search/browsing tool is available, say so and stop.
+This skill requires web search. For every journal you list, open its **official website** and its **mainland-China Simplified-Chinese LetPub journal page on `letpub.com.cn`** first; the table below shows which source is authoritative for each fact. Do not recommend from memory; if no search/browsing tool is available, say so and stop.
+
+LetPub locale rule: search with the journal title and/or ISSN plus `site:letpub.com.cn`, then verify that the opened journal-detail page uses `letpub.com.cn` or `www.letpub.com.cn` and displays Simplified-Chinese content (`lang=zh` where supported). Do not use `letpub.tw` (Taiwan/Traditional Chinese) or `letpub.com` (English), even when those pages rank higher in search results. If no qualifying Chinese-mainland page is found, write `not found` and do not substitute another LetPub region or language site.
 
 | Fact | Authoritative source | Notes |
 |---|---|---|
@@ -119,10 +121,10 @@ This skill requires web search. For every journal you list, open its **official 
 | Open-access legitimacy | DOAJ | A real OA journal is normally DOAJ-listed. Absence is a red flag, not proof, but worth surfacing. |
 | APC / page fees / article types | The journal's own site | Changes often; always the primary source. |
 | Predatory / early-warning status | CAS international early-warning list (中科院国际期刊预警名单); reputable predatory-publisher trackers | Surface any hit before recommending. |
-| Review speed | LetPub (crowd-sourced) and the journal's own reported time-to-first-decision | Least reliable; report LetPub's figure with attribution + its URL and a band, never a bare precise figure. |
+| Review speed | LetPub mainland-China Simplified-Chinese journal page on `letpub.com.cn` (crowd-sourced) and the journal's own reported time-to-first-decision | Least reliable; report LetPub's figure with attribution + its qualifying URL and a band, never a bare precise figure. |
 | Recent related-paper evidence | Journal archive/search plus PubMed/Crossref/OpenAlex/Semantic Scholar/discipline databases or another available scholarly search source | Use the manuscript's exact keywords and broader synonyms; prefer recent 3-5 years; cite 1-3 representative papers with year and DOI/URL. |
 
-URL honesty: list only the real URLs you land on. Never construct a LetPub link (it carries an internal journal id you cannot know from memory) or guess a journal's domain — take both URLs from the search results, and write "not found" if a page cannot be located.
+URL honesty: list only the real URLs you land on. Never construct a LetPub link (it carries an internal journal id you cannot know from memory) or guess a journal's domain — take both URLs from the search results. Write `not found` if a qualifying `letpub.com.cn` Simplified-Chinese journal page cannot be located; never fill the field with a `letpub.tw` or `letpub.com` URL.
 
 Review-speed protocol: report the LetPub-reported turnaround with attribution and its URL, plus a band (fast / moderate / slow). Crowd-sourced data is indicative, not guaranteed; do not present a precise week or month count the pages do not support.
 
@@ -160,7 +162,7 @@ For each recommended journal, give three things:
 - Constraint match: how it satisfies (or where it strains) the user's indexing, OA, budget, language, and speed requirements.
 - Reformatting note only when relevant: if the current manuscript template differs from the target publisher's format, mention that reformatting is needed after choosing the venue, but do not treat it as a fit problem.
 
-Keep each concise. Attach the journal's official-site and LetPub URLs to every entry, include related-paper evidence, and note anything the pages did not confirm.
+Keep each concise. Attach the journal's official-site URL and qualifying mainland-China Simplified-Chinese LetPub URL to every entry, include related-paper evidence, and note anything the pages did not confirm.
 
 ## Adjustment playbook (when a journal is not a fit)
 
@@ -188,7 +190,7 @@ Estimated paper level (estimate):
 Field-top reference candidates (outside the four tiers; optional):
 - <Journal> — indexing <...> · OA/APC <...> · speed <band + LetPub figure>
   Official site: <URL, or "not found">
-  LetPub: <URL, or "not found">
+  LetPub (mainland China, Simplified Chinese): <letpub.com.cn URL, or "not found">
   Recent related papers: <1-3 representative papers with year + DOI/URL, or "no close recent match found">
   Why top for this direction: <field-specific reason, not generic prestige>
   Current realism: <realistic stretch / long-shot / unrealistic> because <specific gap>
@@ -199,7 +201,7 @@ Each tier: aim for about 10 entries; if fewer genuine verified fits exist, state
 Reach (可冲):
 - <Journal> — indexing <SCIE?> · OA/APC <...> · speed <band + LetPub figure>
   Official site: <URL, or "not found">
-  LetPub: <URL, or "not found">
+  LetPub (mainland China, Simplified Chinese): <letpub.com.cn URL, or "not found">
   Recent related papers: <1-3 representative papers with year + DOI/URL, or "no close recent match found">
   Fit: <scope> / <recent-content evidence> / <level> / <constraint>
   Adjust if borderline: <concrete change>
@@ -218,7 +220,7 @@ Red flags / cautions:
 - <any early-warning / predatory / hijacked concern, or "none found">
 
 Sources checked:
-- official site + LetPub opened for every journal listed
+- official site + qualifying mainland-China Simplified-Chinese LetPub page opened for every journal listed
 - recent related papers searched in each journal's archive/site and at least one scholarly index/search source
 - indexing on Master Journal List / Scopus; OA on DOAJ; CAS early-warning list screened
 
@@ -242,7 +244,7 @@ Field-top reference candidates (outside the four tiers):
 
 - <Field-native robotics flagship venue> — indexing <confirmed> · <subscription/OA status from site> · speed <band + LetPub-reported first-decision time>.
   Official site: <journal-site URL opened>
-  LetPub: <LetPub page URL opened>
+  LetPub (mainland China, Simplified Chinese): <letpub.com.cn URL opened>
   Recent related papers: <1-3 recent articles in this venue on LiDAR localization / point-cloud registration / field robotics, with year + DOI/URL>.
   Why top for this direction: recognized high-visibility destination for robotics systems and autonomy work, with recent contents close to the manuscript's technical audience.
   Current realism: long-shot, because the described manuscript has solid deployment evidence but only moderate methodological novelty.
@@ -252,7 +254,7 @@ Reach (可冲):
 
 - <Robotics/automation journal one tier above the anchor> — indexing <SCIE, confirmed on Master Journal List> · <subscription, optional OA, APC from site> · speed <band + LetPub-reported first-decision time>.
   Official site: <journal-site URL opened>
-  LetPub: <LetPub page URL opened>
+  LetPub (mainland China, Simplified Chinese): <letpub.com.cn URL opened>
   Recent related papers: <1-3 recent articles in this journal on LiDAR localization / point-cloud registration, with year + DOI/URL>.
   Fit: scope squarely in robotic perception/localization and recent contents show adjacent work; level slightly above the anchor, so a strong submission is plausible but not likely; satisfies SCIE.
   Adjust if borderline: strengthen the deployment claim with a quantitative degeneracy-handling comparison the venue's reviewers tend to expect.
@@ -260,13 +262,13 @@ Reach (可冲):
 Fast-review reach (审稿快的可冲):
 
 - Often thin here. More selective robotics venues in this scope tend to review slowly (check the LetPub-reported times), so a robotics *letters* venue is usually the way to keep reach-level visibility with faster turnaround — consider submitting as a letter.
-  Official site: <letters-venue URL> · LetPub: <URL>
+  Official site: <letters-venue URL> · LetPub (mainland China, Simplified Chinese): <letpub.com.cn URL>
   Recent related papers: <1-3 recent letter-format or short-communication articles in this topic area, with year + DOI/URL, or "no close recent match found">.
 
 Safe (稳的):
 
 - <Broad-scope indexed venue in sensors/measurement or applied robotics at the anchor level> — indexing <SCIE, confirmed> · <OA optional, APC from site> · speed <band + LetPub figure>.
-  Official site: <URL> · LetPub: <URL>
+  Official site: <URL> · LetPub (mainland China, Simplified Chinese): <letpub.com.cn URL>
   Recent related papers: <1-3 recent articles in this journal on sensor-based localization / mapping / registration, with year + DOI/URL>.
   Fit: scope covers sensor-based localization and recent contents show a recurring applied-sensing audience; level matches the anchor, so acceptance is more likely; satisfies SCIE.
   Adjust if borderline: foreground the sensing/measurement angle in the framing to match the venue's readership.
@@ -274,13 +276,13 @@ Safe (稳的):
 Fast-review safe (快速审稿稳的):
 
 - <Large legitimate open-access venue in scope, DOAJ-listed> — indexing <confirm SCIE vs ESCI/Scopus-only> · <OA, APC from site — the main cost> · speed <band + LetPub figure, usually faster>.
-  Official site: <URL> · LetPub: <URL>
+  Official site: <URL> · LetPub (mainland China, Simplified Chinese): <letpub.com.cn URL>
   Recent related papers: <1-3 recent broad-scope articles close to the manuscript topic, with year + DOI/URL>.
   Fit: broad scope accepts sound, well-evaluated engineering work and recent contents include adjacent work; level at or below the anchor; fast turnaround suits the 2-month deadline.
   Caution: verified DOAJ listing and not on the CAS early-warning list; the APC can be substantial.
 
 Red flags / cautions: none found during verification; the fast-review-safe candidate was checked against DOAJ and the CAS early-warning list.
 
-Sources checked: official site + LetPub + recent related-paper evidence for every journal above; SCIE status on the Master Journal List; DOAJ for the OA candidate; CAS early-warning list screened.
+Sources checked: official site + qualifying mainland-China Simplified-Chinese LetPub page + recent related-paper evidence for every journal above; SCIE status on the Master Journal List; DOAJ for the OA candidate; CAS early-warning list screened.
 
 Next step: pick one, then use paper-cover-letter.
