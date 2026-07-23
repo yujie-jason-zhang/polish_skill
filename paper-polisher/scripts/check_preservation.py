@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check TeX key and numeric-token preservation between two TeX files."""
+"""Check TeX preservation and hard polishing constraints between two TeX files."""
 
 from __future__ import annotations
 
@@ -97,6 +97,149 @@ NUMBER_RE = re.compile(
     r"(?![A-Za-z0-9_])"
 )
 
+PROHIBITED_UNICODE_DASHES = "\u2012\u2013\u2014\u2015\u2e3a\u2e3b"
+PROHIBITED_DASH_RE = re.compile(rf"[{PROHIBITED_UNICODE_DASHES}]|-{{2,}}")
+
+BEGIN_ENVIRONMENT_RE = re.compile(r"\\begin\s*\{\s*(?P<name>[^{}\s]+)\s*\}")
+INLINE_LITERAL_COMMAND_RE = re.compile(r"\\(?P<name>verb|lstinline)(?:\*)?(?![A-Za-z@])")
+TEX_COMMAND_RE = re.compile(r"\\(?P<name>[A-Za-z@]+)(?:\*)?")
+
+LITERAL_ENVIRONMENTS = {
+    "BVerbatim",
+    "LVerbatim",
+    "SaveVerbatim",
+    "Verbatim",
+    "alltt",
+    "asy",
+    "filecontents",
+    "filecontents*",
+    "lstlisting",
+    "luacode",
+    "luacode*",
+    "minted",
+    "pgfpicture",
+    "pspicture",
+    "pycode",
+    "sageblock",
+    "tikzpicture",
+    "verbatim",
+    "verbatim*",
+}
+
+OPAQUE_ENVIRONMENTS = {"thebibliography"}
+
+MATH_ENVIRONMENTS = {
+    "Bmatrix",
+    "IEEEeqnarray",
+    "IEEEeqnarray*",
+    "Vmatrix",
+    "align",
+    "align*",
+    "alignat",
+    "alignat*",
+    "aligned",
+    "alignedat",
+    "array",
+    "bmatrix",
+    "cases",
+    "displaymath",
+    "equation",
+    "equation*",
+    "eqnarray",
+    "eqnarray*",
+    "flalign",
+    "flalign*",
+    "gather",
+    "gather*",
+    "gathered",
+    "math",
+    "matrix",
+    "multline",
+    "multline*",
+    "pmatrix",
+    "smallmatrix",
+    "split",
+    "vmatrix",
+}
+
+# These arguments contain protected keys, identifiers, URLs, paths, or source-code
+# metadata rather than prose. Counts refer to required brace arguments. For
+# commands such as \href, only the opaque target is masked; visible link text is
+# deliberately left available for the prose check.
+OPAQUE_COMMAND_ARGUMENT_COUNTS = {
+    "addbibresource": 1,
+    "autocite": 1,
+    "autoref": 1,
+    "begin": 1,
+    "bibliography": 1,
+    "bibliographystyle": 1,
+    "bibitem": 1,
+    "cite": 1,
+    "citealp": 1,
+    "citealt": 1,
+    "citeauthor": 1,
+    "citep": 1,
+    "citet": 1,
+    "citeyear": 1,
+    "cpageref": 1,
+    "cref": 1,
+    "declaregraphicsextensions": 1,
+    "documentclass": 1,
+    "doi": 1,
+    "end": 1,
+    "eqref": 1,
+    "footcite": 1,
+    "graphicspath": 1,
+    "href": 1,
+    "hyperlink": 1,
+    "hypertarget": 1,
+    "include": 1,
+    "includegraphics": 1,
+    "includeonly": 1,
+    "includefrom": 2,
+    "input": 1,
+    "inputfrom": 2,
+    "inputminted": 2,
+    "label": 1,
+    "lstinputlisting": 1,
+    "nocite": 1,
+    "nolinkurl": 1,
+    "pageref": 1,
+    "parencite": 1,
+    "path": 1,
+    "ref": 1,
+    "requirepackage": 1,
+    "subfile": 1,
+    "subimport": 2,
+    "subref": 1,
+    "textcite": 1,
+    "url": 1,
+    "usepackage": 1,
+    "vref": 1,
+}
+
+VISIBLE_OPTION_ARGUMENT_COMMANDS = {
+    "autocite",
+    "cite",
+    "citealp",
+    "citealt",
+    "citeauthor",
+    "citep",
+    "citet",
+    "citeyear",
+    "footcite",
+    "parencite",
+    "textcite",
+}
+
+UNBRACED_PATH_COMMANDS = {"include", "input", "subfile"}
+
+CLI_LONG_OPTION_RE = re.compile(
+    r"(?<![A-Za-z0-9_-])"
+    r"--[A-Za-z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)*"
+    r"(?:=(?:\"[^\"\r\n]*\"|'[^'\r\n]*'|[^\s,;)}\]]+))?"
+)
+
 
 def strip_comments(text: str) -> str:
     """Remove TeX comments while preserving escaped percent signs."""
@@ -116,6 +259,247 @@ def strip_comments(text: str) -> str:
                 break
         cleaned_lines.append(line if cut_at is None else line[:cut_at])
     return "\n".join(cleaned_lines)
+
+
+def is_escaped(text: str, index: int) -> bool:
+    """Return whether the token starting at index is escaped by a backslash."""
+    backslashes = 0
+    cursor = index - 1
+    while cursor >= 0 and text[cursor] == "\\":
+        backslashes += 1
+        cursor -= 1
+    return backslashes % 2 == 1
+
+
+def mask_span(buffer: list[str], start: int, end: int) -> None:
+    """Blank a span without changing offsets or line numbers."""
+    for index in range(max(start, 0), min(end, len(buffer))):
+        if buffer[index] not in "\r\n":
+            buffer[index] = " "
+
+
+def find_balanced_end(text: str, start: int, opening: str, closing: str) -> int | None:
+    """Return the exclusive end of a balanced TeX argument."""
+    if start >= len(text) or text[start] != opening:
+        return None
+
+    depth = 0
+    for index in range(start, len(text)):
+        if is_escaped(text, index):
+            continue
+        if text[index] == opening:
+            depth += 1
+        elif text[index] == closing:
+            depth -= 1
+            if depth == 0:
+                return index + 1
+    return None
+
+
+def find_environment_end(text: str, name: str, start: int) -> int:
+    end_re = re.compile(rf"\\end\s*\{{\s*{re.escape(name)}\s*\}}")
+    match = end_re.search(text, start)
+    return match.end() if match else len(text)
+
+
+def find_inline_literal_end(text: str, match: re.Match[str]) -> int | None:
+    """Find the end of a \\verb or \\lstinline command."""
+    command = match.group("name")
+    cursor = match.end()
+
+    if command == "lstinline":
+        while cursor < len(text) and text[cursor] in " \t":
+            cursor += 1
+        if cursor < len(text) and text[cursor] == "[":
+            option_end = find_balanced_end(text, cursor, "[", "]")
+            if option_end is None:
+                return text.find("\n", cursor) if "\n" in text[cursor:] else len(text)
+            cursor = option_end
+            while cursor < len(text) and text[cursor] in " \t":
+                cursor += 1
+
+    if cursor >= len(text) or text[cursor] in "\r\n" or text[cursor].isspace():
+        return None
+
+    delimiter = text[cursor]
+    if delimiter == "{" and command == "lstinline":
+        return find_balanced_end(text, cursor, "{", "}")
+
+    line_end = text.find("\n", cursor + 1)
+    search_end = len(text) if line_end == -1 else line_end
+    closing = text.find(delimiter, cursor + 1, search_end)
+    return closing + 1 if closing != -1 else search_end
+
+
+def mask_comments_and_literal_regions(text: str, buffer: list[str]) -> None:
+    """Mask comments, literal code, listings, and source-only environments."""
+    cursor = 0
+    while cursor < len(text):
+        if text[cursor] == "\\" and not is_escaped(text, cursor):
+            environment = BEGIN_ENVIRONMENT_RE.match(text, cursor)
+            if environment and environment.group("name") in LITERAL_ENVIRONMENTS:
+                end = find_environment_end(text, environment.group("name"), environment.end())
+                mask_span(buffer, cursor, end)
+                cursor = end
+                continue
+
+            inline_literal = INLINE_LITERAL_COMMAND_RE.match(text, cursor)
+            if inline_literal:
+                end = find_inline_literal_end(text, inline_literal)
+                if end is not None:
+                    mask_span(buffer, cursor, end)
+                    cursor = end
+                    continue
+
+        if text[cursor] == "%" and not is_escaped(text, cursor):
+            line_end = text.find("\n", cursor)
+            end = len(text) if line_end == -1 else line_end
+            mask_span(buffer, cursor, end)
+            cursor = end
+            continue
+
+        cursor += 1
+
+
+def mask_named_environments(buffer: list[str], names: set[str]) -> None:
+    text = "".join(buffer)
+    cursor = 0
+    while True:
+        environment = BEGIN_ENVIRONMENT_RE.search(text, cursor)
+        if environment is None:
+            return
+        if environment.group("name") not in names:
+            cursor = environment.end()
+            continue
+
+        end = find_environment_end(text, environment.group("name"), environment.end())
+        mask_span(buffer, environment.start(), end)
+        cursor = end
+
+
+def find_unescaped_token(text: str, token: str, start: int) -> int:
+    cursor = text.find(token, start)
+    while cursor != -1 and is_escaped(text, cursor):
+        cursor = text.find(token, cursor + 1)
+    return cursor
+
+
+def mask_delimited_regions(buffer: list[str], opening: str, closing: str) -> None:
+    text = "".join(buffer)
+    cursor = 0
+    while True:
+        start = find_unescaped_token(text, opening, cursor)
+        if start == -1:
+            return
+        end_start = find_unescaped_token(text, closing, start + len(opening))
+        end = len(text) if end_start == -1 else end_start + len(closing)
+        mask_span(buffer, start, end)
+        cursor = end
+
+
+def mask_math_regions(buffer: list[str]) -> None:
+    mask_named_environments(buffer, MATH_ENVIRONMENTS)
+    mask_delimited_regions(buffer, r"\[", r"\]")
+    mask_delimited_regions(buffer, r"\(", r"\)")
+    mask_delimited_regions(buffer, "$$", "$$")
+    mask_delimited_regions(buffer, "$", "$")
+
+
+def skip_tex_whitespace(text: str, start: int) -> int:
+    cursor = start
+    while cursor < len(text) and text[cursor].isspace():
+        cursor += 1
+    return cursor
+
+
+def mask_opaque_command_arguments(buffer: list[str]) -> None:
+    text = "".join(buffer)
+    spans: list[tuple[int, int]] = []
+
+    for match in TEX_COMMAND_RE.finditer(text):
+        if is_escaped(text, match.start()):
+            continue
+        command = match.group("name").lower()
+        argument_count = OPAQUE_COMMAND_ARGUMENT_COUNTS.get(command)
+        if argument_count is None:
+            continue
+
+        cursor = skip_tex_whitespace(text, match.end())
+        while cursor < len(text) and text[cursor] == "[":
+            option_end = find_balanced_end(text, cursor, "[", "]")
+            if option_end is None:
+                spans.append((cursor, len(text)))
+                cursor = len(text)
+                break
+            if command not in VISIBLE_OPTION_ARGUMENT_COMMANDS:
+                spans.append((cursor, option_end))
+            cursor = skip_tex_whitespace(text, option_end)
+
+        for _ in range(argument_count):
+            if cursor >= len(text):
+                break
+            if text[cursor] == "{":
+                argument_end = find_balanced_end(text, cursor, "{", "}")
+                if argument_end is None:
+                    spans.append((cursor, len(text)))
+                    break
+                spans.append((cursor, argument_end))
+                cursor = skip_tex_whitespace(text, argument_end)
+                continue
+
+            if command in UNBRACED_PATH_COMMANDS:
+                argument_end = cursor
+                while argument_end < len(text) and not text[argument_end].isspace():
+                    argument_end += 1
+                spans.append((cursor, argument_end))
+            break
+
+    for start, end in spans:
+        mask_span(buffer, start, end)
+
+
+def mask_cli_long_options(buffer: list[str]) -> None:
+    text = "".join(buffer)
+    for match in CLI_LONG_OPTION_RE.finditer(text):
+        mask_span(buffer, match.start(), match.end())
+
+
+def mask_nonprose_for_dash_check(text: str) -> str:
+    """Return a same-length copy with non-prose TeX regions blanked."""
+    buffer = list(text)
+    mask_comments_and_literal_regions(text, buffer)
+    mask_named_environments(buffer, OPAQUE_ENVIRONMENTS)
+    mask_math_regions(buffer)
+    mask_opaque_command_arguments(buffer)
+    mask_cli_long_options(buffer)
+    return "".join(buffer)
+
+
+def line_context(text: str, index: int, width: int = 120) -> tuple[int, str]:
+    line_number = text.count("\n", 0, index) + 1
+    line_start = text.rfind("\n", 0, index) + 1
+    line_end = text.find("\n", index)
+    if line_end == -1:
+        line_end = len(text)
+
+    half_width = max(width // 2, 1)
+    context_start = max(line_start, index - half_width)
+    context_end = min(line_end, index + half_width)
+    context = " ".join(text[context_start:context_end].strip().split())
+    if context_start > line_start:
+        context = "... " + context
+    if context_end < line_end:
+        context += " ..."
+    return line_number, context
+
+
+def collect_prohibited_dashes(text: str) -> list[tuple[int, str, str]]:
+    masked_text = mask_nonprose_for_dash_check(text)
+    issues: list[tuple[int, str, str]] = []
+    for match in PROHIBITED_DASH_RE.finditer(masked_text):
+        line_number, context = line_context(text, match.start())
+        issues.append((line_number, match.group(0), context))
+    return issues
 
 
 def collect_structural_keys(text: str) -> dict[str, Counter[str]]:
@@ -315,23 +699,42 @@ def check_reference_name_style(original_text: str, polished_text: str, limit: in
     return False
 
 
+def check_dash_free_prose(polished_text: str, limit: int) -> bool:
+    issues = collect_prohibited_dashes(polished_text)
+    if not issues:
+        print("Dash-free prose: PASS")
+        return True
+
+    print("Dash-free prose: FAIL")
+    print(
+        "  Replace dash punctuation with commas, semicolons, parentheses, appositive or relative clauses, "
+        "or explicit wording such as 'from ... to ...'."
+    )
+    for line_number, token, context in issues[:limit]:
+        print(f"    line {line_number}: {token!r} in {context}")
+    remaining = len(issues) - limit
+    if remaining > 0:
+        print(f"    ... {remaining} more")
+    return False
+
+
 def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Check whether structural TeX keys and numeric tokens were preserved."
+        description="Check TeX preservation and hard polishing constraints."
     )
     parser.add_argument("original", type=Path, help="Original TeX file")
     parser.add_argument("polished", type=Path, help="Polished TeX file")
-    parser.add_argument("--limit", type=int, default=20, help="Maximum changed tokens to print per category")
+    parser.add_argument("--limit", type=int, default=20, help="Maximum issues to print per category")
     parser.add_argument(
         "--allow-additions",
         action="store_true",
         help=(
             "Allow added structural keys and numeric tokens while still failing missing original keys, "
-            "missing numeric tokens, placeholder keys, and changed existing image signatures."
+            "missing numeric tokens, placeholder keys, changed existing image signatures, and dash-containing prose."
         ),
     )
     args = parser.parse_args()
@@ -351,6 +754,7 @@ def main() -> int:
     placeholder_pass = check_placeholder_reference_keys(polished_text, args.limit)
     numbering_pass = check_hardcoded_display_numbering(polished_text, args.limit)
     reference_style_pass = check_reference_name_style(original_text, polished_text, args.limit)
+    dash_pass = check_dash_free_prose(polished_text, args.limit)
 
     original_numbers = collect_numbers(original_text)
     polished_numbers = collect_numbers(polished_text)
@@ -360,7 +764,16 @@ def main() -> int:
     reported_added_numbers = Counter() if args.allow_additions else added_numbers
     print_counter_delta("Numeric tokens changed:", missing_numbers, reported_added_numbers, args.limit)
 
-    return 0 if keys_pass and placeholder_pass and numbering_pass and reference_style_pass and numbers_pass else 1
+    return (
+        0
+        if keys_pass
+        and placeholder_pass
+        and numbering_pass
+        and reference_style_pass
+        and dash_pass
+        and numbers_pass
+        else 1
+    )
 
 
 if __name__ == "__main__":

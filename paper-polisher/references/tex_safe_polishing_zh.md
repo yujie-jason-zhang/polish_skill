@@ -168,14 +168,51 @@ caption 中也不要手写对象名和编号，因为 LaTeX 会自动生成 Figu
 - 同一个概念为了追求“变化”被翻译成多个不同英文术语；
 - 不同技术概念被压成同一个模糊英文词。
 
+## 句式变化与破折号规则
+
+拒绝整篇论文出现机械化的重复句式。应在相邻句、相邻段落以及不同章节的同类段落中检查：
+
+- 是否反复使用相同的句首或过渡词；
+- 是否反复套用相同的主谓框架；
+- 是否反复使用相同的从句顺序和语态；
+- 是否每个结果段都套用同一种汇报模板；
+- 是否句长和节奏过度一致。
+
+句式变化必须服务于逻辑和可读性，不能为了表面变化而替换 canonical technical terms，也不能改变技术含义。只有在明确比较或列举时才保留有意义的平行句式；其他机械重复应根据逻辑关系改写为直接陈述、同位语或同位语从句、定语从句、状语等从属结构、冒号、分号或拆句。
+
+```text
+机械表达：The method first extracts geometric features. The method then estimates the pose. The method finally rejects inconsistent hypotheses.
+建议改写：After extracting geometric features, the method estimates the pose and then rejects hypotheses that are geometrically inconsistent.
+```
+
+作者撰写的论文文本中不得使用破折号，包括标题、摘要、各级标题、正文、caption、图表注释、脚注、致谢和附录。禁用形式包括 Unicode `—`、`–`、`―`，以及在 TeX 正文中充当破折号的 `---` 和 `--`。
+
+应根据原句逻辑选择替代表达：
+
+```text
+破折号表达：The controller—an uncertainty-aware module—filters unreliable observations.
+同位语改写：The controller, an uncertainty-aware module, filters unreliable observations.
+
+破折号表达：The analysis yields two findings—the error decreases and convergence becomes more stable.
+冒号改写：The analysis yields two findings: the error decreases and convergence becomes more stable.
+
+同位语从句：The observation that performance degrades under occlusion motivates the confidence gate.
+```
+
+也可以使用定语从句、分号、括号、连词或拆成独立句，只要更准确地表达原有关系。正文中的范围表达应改成 `from ... to ...` 或其他不含破折号的形式。
+
+不要把破折号规则误用于有技术含义或受保护的符号。`risk-aware`、`real-time`、`state-of-the-art` 等固定复合词中的单连字符可以保留；`$a-b$`、`$-1$`、`-3.2 dB` 等数学减号和带符号数值必须保留；TeX key、URL、DOI、文件名、citation key 和参考文献元数据中的连字符也必须原样保全。不得为了形式检查而破坏 protected content。
+
 ## 本地润色流程
 
 1. 判断输入是句子、段落、章节、图表说明、表格注释还是混合 TeX。
 2. 判断局部功能：背景、问题、方法、公式解释、结果、讨论或结论。
 3. 保留所有 TeX 结构、key、变量、数值和技术事实。
 4. 润色为客观正式的学术英文。
-5. 检查术语一致性。
-6. 检查 claim 是否强于原文。
+5. 检查相邻句和段首是否机械重复同一种句式骨架。
+6. 将提供文本中的所有正文破折号改写为表达相同逻辑关系的其他结构。
+7. 检查术语一致性。
+8. 检查 claim 是否强于原文。
 
 ## 全文润色流程
 
@@ -184,8 +221,10 @@ caption 中也不要手写对象名和编号，因为 LaTeX 会自动生成 Figu
 3. 对新增或用户确认过的 label 建立结构清单，全文输出时沿用这些 exact labels。
 4. 分章节润色，保持 TeX 结构和技术事实。
 5. 统一跨章节术语和 claim 边界。
-6. 如果有原始 TeX 和润色后 TeX 文件，运行保全检查脚本。纯润色使用默认严格模式；只有在用户明确新增正文内容、label、reference、图片资源或数值 token 时，才使用 `--allow-additions`。
-7. 输出对应范围的结果和 review report。
+6. 对全文执行句式骨架审查，覆盖相邻句、段首、同类结果段和章节过渡；消除机械重复，但不强行替换技术术语。
+7. 扫描所有作者撰写的正文、标题、caption 和注释，改写每一处破折号后再输出。
+8. 如果有原始 TeX 和润色后 TeX 文件，运行保全检查脚本。纯润色使用默认严格模式；只有在用户明确新增正文内容、label、reference、图片资源或数值 token 时，才使用 `--allow-additions`。
+9. 输出对应范围的结果和 review report。
 
 ## Review Checklist
 
@@ -198,5 +237,7 @@ caption 中也不要手写对象名和编号，因为 LaTeX 会自动生成 Figu
 - 引用和参考文献问题是报告，而不是静默修改。
 - 没有引入 unsupported claims、实验、理论保证或部署价值。
 - 术语保持一致。
+- 相邻句、段首和同类段落没有机械重复相同的句式骨架。
+- 作者撰写的论文文本中没有破折号；受保护的连字符、数学负号、标识符和参考文献元数据保持不变。
 - 语气正式、客观、克制。
 - 输出格式与任务范围匹配。

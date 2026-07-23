@@ -202,14 +202,51 @@ Useful academic verbs and structures:
 - `the results indicate`, `the comparison suggests`, `the ablation study shows`;
 - `under the tested conditions`, `in the evaluated scenarios`, `within this setting`.
 
+## Sentence Architecture and Dash Policy
+
+Reject mechanical repetition at manuscript scale. Inspect adjacent sentences, paragraph openings, and repeated section patterns for the same:
+
+- sentence opener or transition;
+- subject-predicate frame;
+- clause order and voice;
+- result-reporting template;
+- sentence length and cadence.
+
+Do not create variety by replacing a canonical technical term with loose synonyms. Preserve intentional parallelism when it makes a comparison or enumeration clearer. Otherwise, restructure according to the logical relation by using direct clauses, appositive phrases, appositive content clauses, relative clauses, adverbial or other subordinate clauses, colons, semicolons, or sentence splits.
+
+```text
+Mechanical: The method first extracts geometric features. The method then estimates the pose. The method finally rejects inconsistent hypotheses.
+Revised: After extracting geometric features, the method estimates the pose and then rejects hypotheses that are geometrically inconsistent.
+```
+
+Do not use dash punctuation anywhere in author-written manuscript prose, including the title, abstract, headings, body, captions, table or figure notes, footnotes, acknowledgments, and appendices. Prohibited forms include Unicode `—`, `–`, `―`, and equivalent TeX prose sequences such as `---` and `--`.
+
+Choose the replacement from the meaning:
+
+```text
+Dash form: The controller—an uncertainty-aware module—filters unreliable observations.
+Apposition: The controller, an uncertainty-aware module, filters unreliable observations.
+
+Dash form: The analysis yields two findings—the error decreases and convergence becomes more stable.
+Colon: The analysis yields two findings: the error decreases and convergence becomes more stable.
+
+Appositive content clause: The observation that performance degrades under occlusion motivates the confidence gate.
+```
+
+Relative clauses, semicolons, parentheses, conjunctions, and separate sentences are also valid when they express the relation more accurately. Rewrite a prose range with `from ... to ...` or another dash-free construction.
+
+Do not confuse dash punctuation with protected or technically meaningful hyphens and minus signs. Keep a single lexical hyphen in established compounds such as `risk-aware`, `real-time`, and `state-of-the-art`; keep mathematical subtraction and signed values such as `$a-b$`, `$-1$`, and `-3.2 dB`; and preserve hyphens inside TeX keys, URLs, DOI strings, filenames, citation keys, and bibliography metadata. Never alter protected content merely to satisfy a surface-style check.
+
 ## Local Polishing Workflow
 
 1. Identify whether the input is a sentence, paragraph, section, caption, table note, or mixed TeX block.
 2. Identify the local function: background, problem, method, formula explanation, result, discussion, or conclusion.
 3. Preserve all TeX structures, keys, variables, numerical data, and technical facts.
 4. Polish for objective academic English.
-5. Check terminology consistency.
-6. Check whether any claim became stronger than the source.
+5. Check adjacent sentences and paragraph openings for mechanically repeated sentence architecture.
+6. Replace every prose dash in the provided text with a structure that expresses the same logical relation.
+7. Check terminology consistency.
+8. Check whether any claim became stronger than the source.
 
 ## Full-Text Polishing Workflow
 
@@ -218,8 +255,10 @@ Useful academic verbs and structures:
 3. Build a structural ledger for any newly added or user-approved labels, then carry those exact labels into full-text output.
 4. Polish section by section while preserving source meaning and TeX structures.
 5. Keep cross-section terminology and claim boundaries consistent.
-6. Run the preservation script when original and polished TeX files are available. Use strict mode for pure polishing, and use `--allow-additions` only when the user intentionally added new manuscript content, labels, references, image assets, or numeric tokens.
-7. Produce the required output mode and review report.
+6. Run a manuscript-wide sentence-architecture audit across adjacent sentences, paragraph openings, repeated result paragraphs, and section transitions. Revise mechanical repetition without forcing lexical variation in technical terms.
+7. Scan all author-written prose, headings, captions, and notes for prohibited dash punctuation and rewrite every occurrence before output.
+8. Run the preservation script when original and polished TeX files are available. Use strict mode for pure polishing, and use `--allow-additions` only when the user intentionally added new manuscript content, labels, references, image assets, or numeric tokens.
+9. Produce the required output mode and review report.
 
 ## Review Checklist
 
@@ -232,6 +271,8 @@ Before returning, verify:
 - Bibliography and citation issues are reported rather than silently modified.
 - No unsupported claims, experiments, guarantees, or deployment value were introduced.
 - Technical terms are consistent.
+- Adjacent sentences, paragraph openings, and repeated section patterns do not reuse the same sentence architecture mechanically.
+- Author-written manuscript prose contains no dash punctuation; protected hyphens, minus signs, identifiers, and bibliography metadata are unchanged.
 - Tone is formal, objective, and restrained.
 - Output format matches the task scope.
 
@@ -264,6 +305,8 @@ Review report:
 - Numerical/data preservation: PASS
 - Terminology consistency: PASS
 - Citation and bibliography consistency: PASS / ISSUE REPORTED / NOT PRESENT
+- Sentence-structure variety: PASS
+- Dash-free prose: PASS
 - Objective tone and claim boundaries: PASS
 - Output completeness: PASS
 
@@ -271,6 +314,8 @@ Compliance note:
 - TeX structures, equations, labels, references, citations, bibliography keys, variables, and original command keys are preserved.
 - Numerical values, units, datasets, baselines, metrics, and reported results are preserved.
 - Terminology has been checked for consistency.
+- Repeated sentence frames and paragraph openings have been revised where they created mechanical prose.
+- Author-written manuscript prose contains no dash punctuation; protected technical identifiers and bibliography metadata remain unchanged.
 - Bibliography-entry issues are reported for review rather than edited automatically.
 - No unsupported technical claims or experimental results have been introduced.
 ```
