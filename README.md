@@ -15,7 +15,7 @@ The suite is designed for users who work with research-paper PDFs, manuscript dr
 | `problem-driven-literature-review` | A literature review, related work section, introduction background, research gap, or citation plan needs structure. | Problem-driven review logic, S-R-L-H-G-M-C-V worksheet, reference roles, gap and contribution mapping. |
 | `paper-argument-reconstructor` | A draft exists, but the abstract, introduction, section logic, method narrative, or experiment-to-claim relation is weak. | Rebuilt section logic, contribution framing, storyline diagnosis, revised manuscript structure. |
 | `experiment-section-auditor` | An experiment section, ablation plan, or results writeup needs an audit against fixed claims and real resource limits. | Claim-evidence map, minimal experiment or ablation gaps, padding cuts, results-narration issues, feasibility disclaimer. |
-| `paper-polisher` | Chinese or English TeX manuscript text needs faithful academic English polishing or local revision. | TeX-safe polished text, terminology consistency, fidelity review, optional preservation check. |
+| `paper-polisher` | Chinese or English TeX manuscript text needs faithful academic English polishing, source comparison, terminology/notation/numerical-consistency auditing, or an author-approved notation normalization. | One authoritative TeX result or a report-only audit, with preservation, coverage, and consistency findings kept separate. |
 | `journal-recommender` | A finished or near-finished manuscript needs realistic target journals, fast-review options, or fit verification for a journal shortlist. | Four-tier journal shortlist with live official-site, LetPub, indexing, red-flag, and recent related-paper evidence. |
 | `paper-cover-letter` | The manuscript is ready for submission and needs a journal cover letter. | Submission cover letter with bounded contribution claims, scope-fit argument, placeholders for unconfirmed details. |
 | `paper-response-to-reviewers` | Reviewer or editor comments need a revision plan and point-by-point response. | Comment decomposition, severity/evidence grading, revision plan, response letter, consistency audit. |
@@ -29,16 +29,18 @@ The video covers a practical paper workflow in three modules:
 | Video Module | Repository Mapping |
 |---|---|
 | Journal selection | Use `journal-recommender` before `paper-cover-letter` to narrow target venues by scope, level, indexing, OA/budget, review speed, red flags, and recent related-paper evidence. Do not infer the target venue from the current LaTeX template; reformat after choosing the journal. |
-| LaTeX formatting and manuscript structure | Use `paper-argument-reconstructor` for section logic and contribution framing; use `experiment-section-auditor` for experiment-set minimality, ablation sufficiency, and results narration; use `paper-polisher` for TeX-safe language polishing and preservation checks. Journal-specific LaTeX formatting still follows the target journal template. |
+| LaTeX formatting and manuscript structure | Use `paper-argument-reconstructor` for section logic and contribution framing; use `experiment-section-auditor` for experiment-set minimality, ablation sufficiency, and results narration; use `paper-polisher` for TeX-safe language polishing, preservation checks, and source-internal terminology, notation, and numerical-consistency audits. Journal-specific LaTeX formatting still follows the target journal template. |
 | Response to reviewers | Use `paper-response-to-reviewers` after reviews arrive. The skill separates comments, plans manuscript revisions before claiming changes, drafts point-by-point replies, and checks that every promised edit exists in the revised manuscript. |
 
 ## Operating Model
 
-Most drafting and auditing skills support two modes.
+Most drafting and auditing skills support generation and verification workflows. Some skills expose narrower audit or authorized-edit modes when those actions need different safety boundaries.
 
 Generation mode is the default. The skill drafts, revises, audits, or plans according to its scope.
 
-Verification mode is used when another tool or skill has already produced a draft. In this mode, the skill does not replace the wording by default. It checks for rule violations such as broken TeX keys, changed numbers, overclaimed novelty, unsupported citations, inconsistent terminology, fabricated manuscript changes, or response-letter promises not present in the revision.
+Verification mode is used when the user asks to compare or quality-check an existing draft. Explicit user intent takes precedence over who produced the text. Verification focuses on reporting deviations and does not replace wording unless the user separately requests an edit.
+
+For `paper-polisher`, source-to-output verification requires both the original and candidate; if the original is missing, comparison fields are `NOT ASSESSED`, and the candidate is never repaired in verification mode. The skill also has a consistency-only mode for terminology, mathematical notation, and source-internal numerical facts, plus an authorized notation-normalization mode that applies only an exact author-approved mapping. These modes report audit `Coverage` separately from the assessed-scope `Result`.
 
 This makes the suite useful both as a primary workflow and as a quality-control layer after other AI tools.
 
@@ -46,7 +48,7 @@ This makes the suite useful both as a primary workflow and as a quality-control 
 
 ## Human Review
 
-Treat all AI-generated notes and edits as draft material. Reading, polishing, and rewriting can still introduce subtle errors even when a skill applies evidence or preservation rules. Before submission or reuse, manually compare substantive content against the source paper or manuscript and verify technical meaning, numerical values, equations, citation support, reference metadata, and journal-specific formatting.
+Treat all AI-generated notes and edits as draft material. Reading, polishing, and rewriting can still introduce subtle errors even when a skill applies evidence or preservation rules. Before submission or reuse, manually compare substantive content against the source paper or manuscript and verify technical meaning, numerical values and their order, units, positive/negative or plus-minus signs, equations, citation support, reference metadata, and journal-specific formatting.
 
 ## Recommended Workflows
 
@@ -181,6 +183,8 @@ paper-polisher/
 |-- SKILL.md
 |-- scripts/
 |   `-- check_preservation.py
+|-- tests/
+|   `-- test_check_preservation.py
 `-- references/
     |-- tex_safe_polishing.md
     `-- tex_safe_polishing_zh.md
@@ -224,7 +228,25 @@ Use problem-driven-literature-review to revise this related work section. Organi
 TeX-safe polishing:
 
 ```text
-Use paper-polisher to polish this TeX section into formal engineering-journal English. Preserve equations, labels, references, citations, variables, numbers, and technical meaning.
+Use paper-polisher to polish this TeX section into formal engineering-journal English. Preserve equations, labels, references, citations, variables, every number and unit, numerical-token order, positive/negative or plus-minus signs, and technical meaning.
+```
+
+Mathematical-notation audit:
+
+```text
+Use paper-polisher to audit mathematical notation across this full TeX manuscript. Resolve the root and included files, report Coverage separately from Result, and create SYM-* findings for the same entity using multiple symbols or one symbol denoting different entities. Give exact locations and evidence. Do not rename anything.
+```
+
+Source-internal numerical-consistency audit:
+
+```text
+Use paper-polisher to audit whether each metric, experiment setting, sample count, table/prose value, unit, and sign is consistent throughout this manuscript. Return NUM-* findings with exact conditions and locations. Do not change or infer any value.
+```
+
+Author-approved notation normalization:
+
+```text
+Use paper-polisher in approved notation-normalization mode with this exact entity-to-symbol mapping. Apply only the listed substitutions, record each as AUTHORIZED CHANGE, keep every number, unit, sign, key, and unrelated formula unchanged, and report any unresolved macro or figure-asset occurrence.
 ```
 
 Experiment section audit:
@@ -248,18 +270,37 @@ Use paper-response-to-reviewers to plan and draft a point-by-point response. Do 
 Verification:
 
 ```text
-Use paper-polisher in verification mode to compare this polished TeX against the original. Report broken keys, changed numbers, strengthened claims, or terminology drift without rewriting the whole text.
+Use paper-polisher in verification mode to compare this polished TeX against the original. Report candidate-introduced broken keys, changed math, changed or reordered numbers/units/signs, strengthened claims, and terminology drift. Report source-internal TERM-*, SYM-*, and NUM-* findings separately. Do not modify the candidate. If the original is unavailable, mark all comparative checks NOT ASSESSED.
 ```
 
 ## Preservation Check
 
-For local TeX polishing workflows, compare the original and polished files before finalizing:
+For a single-file TeX workflow, compare the original and candidate before finalizing:
 
 ```bash
-python3 paper-polisher/scripts/check_preservation.py original.tex polished.tex
+python3 paper-polisher/scripts/check_preservation.py original.tex candidate.tex
 ```
 
-The script reports changed structural TeX keys and numeric tokens. Run it on the original TeX content and the polished TeX content, not on a complete AI response that also contains notes or review comments.
+Use `--allow-additions` only for explicitly authorized ordinary prose additions. It does not permit any structural-key, image-asset, math-region, numerical-token, unit, or sign addition, deletion, change, or reordering, and it is not a notation-normalization mode. Numerical protection also covers digits in identifiers, comments, literal examples, URLs, and protected arguments. Recognized comments and literal/code regions remain exact protected source, including comment line-boundary semantics and their order relative to protected math and TeX; custom unrecognized literal macros require manual comparison.
+
+For a multi-file manuscript, pass both authoritative root TeX files:
+
+```bash
+python3 paper-polisher/scripts/check_preservation.py original/main.tex candidate/main.tex --project
+```
+
+Project mode follows static `input`/`include`/`subfile`/`subfileinclude` directives and the `import`/`subimport`/`inputfrom`/`includefrom` families while preserving the current and previous import-directory contexts. Missing, dynamic, or cyclic paths fail closed.
+
+For a globally applicable, exact author-approved math-token mapping, repeat `--approved-symbol-map` as needed:
+
+```bash
+python3 paper-polisher/scripts/check_preservation.py original.tex normalized.tex \
+  --approved-symbol-map 'M=N'
+```
+
+This option is normalization-only, rejects unambiguous numeric, currency, percentage, and sign mappings, and permits no unrelated prose or math change. A mapping never authorizes a unit change; ambiguous bare glyphs require the entity-aware authorization ledger and manual unit review. For a scope-limited mapping or one with intentional glyph reuse, use the location-aware authorization ledger and an author-approved baseline instead.
+
+Run the checker on manuscript files, not on a complete AI response containing notes or review comments. A pass confirms only supported source-to-output preservation. The numerical scanner covers recognized decimal, English textual, contextual Roman, and Unicode numbers plus recognized signs, markers, currencies, common units, and unit-like compounds in supported anchored, TeX-connected, delimited, or explicit-cue contexts. Manually compare every unrecognized form or context, including ambiguous standalone unit-like glyphs. Source-internal terminology, notation, and numerical consistency require the audits and completeness gate defined by the skill.
 
 ## Reference Metadata Check
 

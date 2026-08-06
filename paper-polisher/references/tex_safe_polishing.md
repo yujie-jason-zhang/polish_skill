@@ -1,31 +1,50 @@
 # TeX-Safe Academic Polishing Guide
 
+## Contents
+
+- [Core Goal](#core-goal)
+- [Source-to-Output Preservation](#source-to-output-preservation)
+- [Structural Keys and Referenceable Objects](#structural-keys-and-referenceable-objects)
+- [Faithful Language Revision](#faithful-language-revision)
+- [Terminology Consistency](#terminology-consistency)
+- [Mathematical Notation Consistency](#mathematical-notation-consistency)
+- [Source-Internal Numerical Consistency](#source-internal-numerical-consistency)
+- [Full-Manuscript Coverage](#full-manuscript-coverage)
+- [Sentence Architecture and Dash Policy](#sentence-architecture-and-dash-policy)
+- [Mode Workflows](#mode-workflows)
+- [Preservation Checker](#preservation-checker)
+- [Output Examples](#output-examples)
+
 ## Core Goal
 
-Turn unpolished Chinese or English TeX manuscript text into formal, restrained, professional engineering-journal English without changing the paper's technical truth.
+Produce formal, restrained engineering-journal English without changing the manuscript's technical truth. Depending on the mode selected in `SKILL.md`, either polish the prose, verify a candidate against its source, audit terminology/notation/numerical consistency without editing, or apply only an exact author-approved notation mapping.
 
-This reference is for faithful expression improvement. It is not a novelty-audit guide and not a full argument-redesign guide.
+Keep four questions separate:
 
-The polished text should show:
+1. Did the candidate preserve protected source content?
+2. Is the source internally consistent in terminology?
+3. Is the source internally consistent in mathematical notation?
+4. Does the source report each numerical fact, unit, and sign consistently?
 
-- clear and concise academic expression;
-- stable terminology;
-- objective tone;
-- preserved TeX structure;
-- preserved numerical data and experimental facts;
-- no unsupported claims.
+A preservation pass does not answer the three semantic consistency questions. A source-level inconsistency does not authorize a correction.
 
-## Preservation Rules
+## Source-to-Output Preservation
 
-Always preserve:
+Preserve exactly:
 
-- inline and display math, including `$...$`, `\(...\)`, `\[...\]`, `equation`, `align`, `gather`, and similar environments;
+- inline and display math, including `$...$`, `\(...\)`, `\[...\]`, and named math environments;
 - figure, table, algorithm, theorem, proof, lemma, definition, and remark environments;
-- `\label{...}`, `\ref{...}`, `\eqref{...}`, `\autoref{...}`, `\cref{...}`, `\includegraphics{...}`, `\cite{...}`, `\citep{...}`, `\citet{...}`, `\bibitem{...}`, and BibTeX entry keys;
-- variable names, function names, module names, model names, dataset names, metric names, baseline names, and abbreviations;
-- numerical values, units, percentages, sample sizes, parameter settings, table values, figure-reported values, and significance markers.
+- structural commands and their arguments, including labels, references, citations, bibliography keys, and image paths;
+- comments and literal or code-like source, including comment/verbatim/listing environments and inline literal commands, together with inline-versus-whole-line comment boundaries and their order relative to protected math and TeX;
+- variable and function notation unless an exact substitution appears in an author-approved symbol mapping;
+- numerical values, numerical-token order, units, percentages, dimensions, sample sizes, parameter settings, table values, figure-reported values, significance markers, and positive, negative, or plus-minus signs;
+- technical meaning, conditions, assumptions, algorithms, proof steps, experiments, baselines, datasets, metrics, and results.
 
-Preserving TeX means preserving command arguments and keys exactly. For example:
+This hard numerical rule applies in polishing, translation, ordinary prose addition, verification, consistency auditing, and notation normalization. It covers digits embedded in identifiers and numerical tokens inside comments, literal examples, URLs, and protected command arguments. Do not insert, delete, change, or reorder a number merely to improve prose flow. Reorder a clause or sentence only when its protected math and numerical tokens remain in the same document order. This skill has no numerical-edit exception. If a value must be corrected, ask the user to revise it outside paper-polisher and provide the corrected TeX as a new author-approved baseline.
+
+The preservation checker treats each recognized comment and literal/code region as exact protected source in every mode. Do not turn active prose into a comment, move text into or out of a literal region, change an inline `%` into a whole-line comment, or move such a region across protected math or TeX structures. This protects TeX comment-newline semantics as well as the visible source payload. Manually compare custom or unrecognized literal macros.
+
+Preserve command arguments and keys exactly. For example:
 
 ```latex
 \label{sec:method}
@@ -43,19 +62,13 @@ must not become:
 \cite{Smith2023}
 ```
 
-Do not silently fix suspicious values, inconsistent units, duplicated citations, malformed bibliography entries, or possible author-name order problems. Report them for user review unless the user explicitly authorizes reference or data cleanup.
+Do not silently repair a suspicious value, unit, sign, citation, bibliography entry, or author-name order. Report it. Never change numerical content in this skill or infer the intended value from a neighboring table, trend, conversion, or expected result. Ask the user to supply externally corrected TeX as a new baseline.
 
-When adding a new referenceable object, do not create generic placeholder labels. Follow the manuscript's existing label convention and make the key semantically tied to the object:
+## Structural Keys and Referenceable Objects
 
-```latex
-\label{tab:diff_methods}
-\label{fig:framework}
-\label{alg:training}
-```
+When the user explicitly requests a new referenceable object, first follow the manuscript's label convention. If none exists, use a semantic typed label:
 
-If there is no clear manuscript convention, use `type:semantic_name`:
-
-| Object type | Prefix | Example |
+| Object | Prefix | Example |
 |---|---|---|
 | Section | `sec:` | `\label{sec:method}` |
 | Subsection | `subsec:` | `\label{subsec:ablation_setup}` |
@@ -66,16 +79,11 @@ If there is no clear manuscript convention, use `type:semantic_name`:
 | Theorem | `thm:` | `\label{thm:convergence}` |
 | Appendix | `app:` | `\label{app:implementation}` |
 
-If the manuscript already uses underscore labels, keep that convention:
+Keep an established underscore convention when present, such as `\label{tab_diff_methods}`. Never emit bare placeholders such as `\label{tab}`, `\ref{tab}`, `\label{fig}`, `\ref{fig}`, `\label{tmp}`, or `\label{label}`.
 
-```latex
-\label{tab_diff_methods}
-\label{fig_framework}
-```
+After the user approves a new label, reference, image path, sizing option, or cropping option, protect it exactly. A newly requested table, figure, equation, citation, asset, or other structural object does not become permissible under `--allow-additions`; approve the resulting manuscript as a new baseline before subsequent strict comparison.
 
-Never emit bare labels or references such as `\label{tab}`, `\ref{tab}`, `\label{fig}`, `\ref{fig}`, `\label{table}`, `\label{figure}`, `\label{img}`, `\label{image}`, `\label{tmp}`, or `\label{label}`. Once the user specifies or approves a new label, treat it as protected in the same way as an original key. In later full-text generation, preserve that label exactly and keep any `\ref`, `\autoref`, or `\cref` targets consistent.
-
-When referring to existing objects, first identify the exact label keys already present in the manuscript. For example, if the table labels are:
+When referring to an existing object, inspect its exact label. If a manuscript contains:
 
 ```latex
 \label{tab:ablation}
@@ -83,44 +91,21 @@ When referring to existing objects, first identify the exact label keys already 
 \label{tab:torwic_errors}
 ```
 
-then a controlled-indoor-experiment paragraph should refer only to the relevant controlled-indoor tables:
+then a paragraph about the controlled indoor evaluation may use:
 
 ```latex
 Tables~\ref{tab:ablation} and~\ref{tab:errors}
 ```
 
-Do not write `Tables~\ref{tab} and~\ref{tab}`, and do not include `\ref{tab:torwic_errors}` unless the sentence is about the TorWIC evaluation.
+Do not replace the exact targets with generic labels or include an unrelated table.
 
-Do not confuse internal label keys with displayed numbers. A label such as `\label{fig:1}` is acceptable if it is the manuscript's existing convention, but prose should still use a reference command with the target journal or manuscript's established reference-name style:
-
-```latex
-Fig.~\ref{fig:1}
-Figure~\ref{fig:1}
-```
-
-Use `Fig.` or `Figure` according to the target journal template or the manuscript's existing style, and keep that choice consistent across the manuscript. The same applies to styles such as `Eq.` versus `Equation` and `Sec.` versus `Section`. Do not hard-code the displayed number:
-
-```latex
-Figure 1
-Fig. 1
-```
-
-Captions must not include the displayed object name and number, because LaTeX generates them automatically. Use:
+Use the manuscript or journal's established reference-name style, such as `Fig.` versus `Figure`, `Eq.` versus `Equation`, and `Sec.` versus `Section`. Never hard-code displayed numbers such as `Figure 1` or `Table 1`. Captions must also omit the generated object name and number:
 
 ```latex
 \caption{Overall framework of the proposed method.}
 ```
 
-not:
-
-```latex
-\caption{Figure 1. Overall framework of the proposed method.}
-\caption{Fig. 1. Overall framework of the proposed method.}
-```
-
-The same rule applies to tables, algorithms, equations, sections, and appendices when they are referenced or captioned in TeX source.
-
-For newly inserted figures, protect both the semantic figure label and the image asset reference:
+For a new figure, protect both the approved label and asset signature:
 
 ```latex
 \begin{figure}
@@ -131,191 +116,259 @@ For newly inserted figures, protect both the semantic figure label and the image
 \end{figure}
 ```
 
-In later full-text generation, keep `figures/framework.pdf`, the approved sizing/cropping options, and `\label{fig:framework}` unless the user explicitly asks to rename, move, resize, or replace the image. Do not simplify the path to `framework.pdf`, invent a new filename, or fall back to `\label{fig}`.
+Do not simplify the path, replace the file, or alter approved image options without explicit authorization and a new baseline.
 
-## Faithfulness Rules
+## Faithful Language Revision
 
-Allowed edits:
+Allowed prose edits include:
 
-- reorder clauses or sentences for readability;
-- split overly long sentences;
-- merge repeated phrases;
-- add light transitions when the relation is already implied by the source;
-- replace colloquial wording with formal academic wording;
-- make implicit local logic explicit without adding new technical content.
+- splitting an overlong sentence;
+- merging redundant wording;
+- adding a light transition already implied by the source;
+- replacing colloquial wording with formal academic language;
+- making local logic explicit without adding technical content;
+- reordering prose-only clauses or sentences when no protected math, structural key, number, unit, or sign changes order.
 
-Forbidden edits:
+Forbidden edits include:
 
-- changing definitions, assumptions, algorithms, proof steps, formulas, or experimental settings;
-- adding new experiments, guarantees, limitations, applications, or deployment claims;
+- changing definitions, assumptions, algorithms, proofs, formulas, or experimental settings;
+- adding experiments, guarantees, limitations, applications, or deployment claims;
 - presenting correlation as causation;
 - expanding a local result into a general superiority claim;
 - converting a heuristic into a theoretical guarantee;
-- altering baselines, datasets, metrics, numerical values, or reported results.
+- altering baselines, datasets, metrics, values, units, signs, or reported results.
 
-## Terminology Control
+## Terminology Consistency
 
-For each important concept, choose a canonical term or term family and use it consistently.
+Build a terminology ledger for a terminology-dense section or full manuscript:
 
-Build a small terminology ledger when the text is long or terminology-dense:
+| Entity or concept | Canonical term/family | Definition locations | Use locations | Allowed contextual forms | Avoid or reserve for |
+|---|---|---|---|---|---|
+| ... | ... | ... | ... | ... | ... |
 
-| Source term | Technical concept | Canonical term/family | Allowed contextual forms | Avoid/reserve for |
-|---|---|---|---|---|
-| ... | ... | ... | ... | ... |
+Check both directions:
 
-Check for two common failures:
+- one entity expressed through multiple terms without an explicit distinction;
+- one term used for different entities in the same or overlapping scope.
 
-- the same concept is translated into multiple English terms for stylistic variety;
-- different technical concepts are collapsed into one vague English term.
+Do not replace a technical term merely for stylistic variety. Distinguish related but non-equivalent terms such as `open-vocabulary`, `open-set`, and `open-world`, or `risk-aware`, `safety-aware`, and `uncertainty-aware`, according to the manuscript's definitions.
 
-Examples:
+Report terminology findings with `TERM-*` identifiers and use the shared Coverage/Result protocol from `SKILL.md`. A recommended term is provisional unless the manuscript clearly establishes it or the author approves it.
 
-- Do not mix `open-vocabulary`, `open-set`, and `open-world` unless the manuscript distinguishes them.
-- Use `heading angle`, `heading`, or `yaw angle` according to the defined quantity; reserve `orientation` for broader pose or attitude when needed.
-- Distinguish `risk-aware`, `safety-aware`, and `uncertainty-aware` by their actual roles in the method.
+## Mathematical Notation Consistency
 
-## Academic Style
+Treat notation as a bidirectional mapping between mathematical entities and rendered symbols. Build a ledger:
 
-Avoid colloquial, subjective, or exaggerated expressions:
+| Mathematical entity | Symbol | Definition locations | Use locations | Scope | Type/dimensions | Frame | Explicit aliases |
+|---|---|---|---|---|---|---|---|
+| ... | ... | ... | ... | ... | ... | ... | ... |
 
-- `get`
-- `deal with`
-- `a lot of`
-- `very good`
-- `obviously`
-- `clearly`
-- `as we all know`
-- `has important significance`
-- `plays a very important role`
+Check both directions:
 
-Prefer precise, mechanism-oriented expression:
+- **Entity to symbol:** the same object appears under multiple symbols, such as one transform denoted by `M` in one section and `N` in another.
+- **Symbol to entity:** the same rendered symbol denotes different objects in the same or overlapping scopes.
 
-```text
-Not recommended: This method can get very good results.
-Recommended: The proposed method achieves consistent performance improvements under different scenarios.
-```
+Compare explicit definitions, descriptive prose, operand roles, types, dimensions, frames, units, and equation dependencies. Inspect case, font family or weight, accents, primes, subscripts, and superscripts because these may encode identity rather than cosmetic style.
 
-Useful academic verbs and structures:
+Do not report a conflict merely because a glyph is reused as:
 
-- `to address`, `to mitigate`, `to characterize`, `to quantify`, `to evaluate`;
-- `is introduced`, `is formulated`, `is designed`, `is used to`;
-- `the results indicate`, `the comparison suggests`, `the ablation study shows`;
-- `under the tested conditions`, `in the evaluated scenarios`, `within this setting`.
+- a local dummy variable, loop index, or summation index;
+- an explicitly defined alias;
+- a deliberately distinct time step or coordinate-frame quantity;
+- a value in a clearly nonoverlapping local scope.
+
+When the evidence establishes a conflict, report it as `ISSUE REPORTED` even if the author must choose the preferred symbol. Use `AUTHOR DECISION REQUIRED` when the entity identity or intended notation itself is ambiguous. Keep the proposed canonical choice in a separate field.
+
+### Applying an Approved Mapping
+
+Before editing, record the exact authorization:
+
+| Finding | Entity | Old symbol | Approved symbol | Included locations/scope | Aliases or exclusions |
+|---|---|---|---|---|---|
+| `SYM-...` | ... | ... | ... | ... | ... |
+
+Then:
+
+1. Change only mapped symbol occurrences.
+2. Update every affected TeX-visible definition and use in equations, prose, algorithms, captions, tables, and appendices.
+3. Keep numbers, units, dimensions, signs, structural keys, and unrelated math unchanged and in order.
+4. List every substitution as `AUTHORIZED CHANGE` and fail or report every unmapped difference.
+5. Inspect affected notation embedded in figures. If editable source is unavailable, report the unresolved asset and do not claim complete normalization.
+6. Use mapping-aware validation when supported. Otherwise, have the author approve the normalized TeX as a new baseline before any later polishing, then compare later drafts strictly against that baseline.
+
+For a combined normalization-and-polishing request, finish and approve this mapping-only stage first. Use its approved output as the source for a separate prose-polishing stage; never present a combined prose and symbol diff as mapping-only validation.
+
+Do not use ordinary additions-aware checking to excuse notation edits.
+
+## Source-Internal Numerical Consistency
+
+Build a numerical ledger for every important reported or configured quantity:
+
+| Quantity or fact | Value | Unit | Sign/direction | Condition or experiment | Locations | Related table/figure |
+|---|---|---|---|---|---|---|
+| ... | ... | ... | ... | ... | ... | ... |
+
+Check whether the same quantity and condition are reported consistently across:
+
+- abstract, main text, conclusion, and appendix;
+- method settings and experiment settings;
+- prose, tables, captions, and supplied figures;
+- sample counts, splits, epochs, dimensions, thresholds, and hyperparameters;
+- raw values, percentages, deltas, confidence intervals, uncertainty notation, and significance markers;
+- units, unit prefixes, positive/negative direction, and `\pm` or equivalent signs.
+
+Do not compare numbers without first matching the metric, dataset, split, condition, aggregation, and rounding convention. A rounded summary, unit conversion, per-split result, or differently signed convention may be legitimate. If equivalence cannot be established, use `AUTHOR DECISION REQUIRED` rather than guessing.
+
+Use `NUM-*` for findings. A clear mismatch, such as the same test-set accuracy reported as `91.2\%` in a table and `92.1\%` in the prose under the same condition, is `ISSUE REPORTED`. Do not change either value. Ask the user to correct and confirm the source outside this skill, then provide the corrected TeX as a new baseline.
+
+Numerical consistency auditing is source-internal. It does not weaken source-to-output preservation: even a visibly suspicious number must remain unchanged in a polish or notation-normalization output.
+
+## Full-Manuscript Coverage
+
+Use the completeness gate in `SKILL.md` before claiming `Coverage: FULL MANUSCRIPT`.
+
+Start from an authoritative root file and retain resolved document order. Follow statically resolvable `\input`, `\include`, `\subfile`, `\import`, and project-specific equivalents. Record unresolved conditional includes, macro-generated paths, missing generated tables, separate supplements, and cycles as coverage gaps.
+
+Inspect all notation-producing macro definitions and uses, not only macros changed between two drafts. Identify custom math environments and notation embedded in algorithms or diagram code. A checker that preserves macro text still cannot determine whether the source uses the rendered entity consistently.
+
+For supplied figure assets, inspect visible variable names, units, legends, and reported values when they are part of the requested audit. If relevant embedded content cannot be inspected, use partial coverage. If normalization requires editing embedded labels but an editable source asset is unavailable, leave the asset unchanged and report that normalization is incomplete.
+
+Use root-relative `file:line` locations. If the input is pasted text, anchor findings to section/equation/table labels and a short identifying excerpt. Assign `TERM-*`, `SYM-*`, and `NUM-*` in deterministic source order within each prefix.
 
 ## Sentence Architecture and Dash Policy
 
-Reject mechanical repetition at manuscript scale. Inspect adjacent sentences, paragraph openings, and repeated section patterns for the same:
+Avoid mechanically repeating the same opener, subject-predicate frame, clause order, voice, transition, result template, or paragraph opening. Preserve intentional parallelism when it supports comparison or enumeration. Vary structure according to logic without replacing canonical technical terms or moving protected math and numerical tokens.
 
-- sentence opener or transition;
-- subject-predicate frame;
-- clause order and voice;
-- result-reporting template;
-- sentence length and cadence.
+Do not use dash punctuation in author-written manuscript prose, including titles, headings, abstracts, captions, notes, footnotes, acknowledgments, and appendices. Replace an em dash or en dash according to its role with apposition, a content clause, relative clause, colon, semicolon, parentheses, conjunction, or separate sentence.
 
-Do not create variety by replacing a canonical technical term with loose synonyms. Preserve intentional parallelism when it makes a comparison or enumeration clearer. Otherwise, restructure according to the logical relation by using direct clauses, appositive phrases, appositive content clauses, relative clauses, adverbial or other subordinate clauses, colons, semicolons, or sentence splits.
+Do not confuse prose dashes with protected forms. Preserve lexical hyphens in established compounds, hyphens in keys/URLs/DOIs/filenames/citation keys, and every mathematical minus or signed value. For example, keep `risk-aware`, `$a-b$`, `$-1$`, `-3.2 dB`, and `mean \pm std` exactly when they appear in the source.
 
-```text
-Mechanical: The method first extracts geometric features. The method then estimates the pose. The method finally rejects inconsistent hypotheses.
-Revised: After extracting geometric features, the method estimates the pose and then rejects hypotheses that are geometrically inconsistent.
+## Mode Workflows
+
+### Local Polishing
+
+1. Identify the local rhetorical function.
+2. Preserve TeX, math, keys, numbers, units, signs, and facts.
+3. Polish for objective academic English without moving protected tokens.
+4. Check visible terminology, notation, and numerical consistency.
+5. Report local findings with `Coverage: PARTIAL`; a locally clean scope may still have `Result: PASS`.
+
+### Full-Manuscript Polishing
+
+1. Resolve the project and apply the completeness gate.
+2. Build terminology, notation, numerical, and structural ledgers.
+3. Polish section by section while maintaining protected-token order.
+4. Run all three source-internal consistency audits.
+5. Run manuscript-wide style, claim-boundary, and dash checks over the assessed scope.
+6. Run strict source comparison, using project mode for a multi-file manuscript.
+7. Return one authoritative TeX artifact plus the review report. Add Markdown only if explicitly requested.
+
+### Verification
+
+1. Record whether both original and candidate are available.
+2. If both exist, compare protected TeX/math, structural keys, numbers/units/signs, technical meaning, and claims.
+3. If the original is missing, mark all comparative fields `NOT ASSESSED` and perform only intrinsic candidate checks.
+4. Separate candidate-introduced deviations from source-internal `TERM-*`, `SYM-*`, and `NUM-*` findings.
+5. Report only. Do not modify the candidate.
+
+### Consistency-Only Audit
+
+1. Apply the completeness gate and state assessed scope.
+2. Build only the ledgers relevant to the request.
+3. Return Coverage and Result separately for terminology, notation, and numerical consistency as applicable.
+4. Provide findings and author questions without editing source content.
+
+### Approved Notation Normalization
+
+1. Require an exact approved mapping; otherwise remain in audit mode.
+2. Apply only mapped substitutions and retain an authorization ledger.
+3. Report unresolved macros, custom environments, generated files, or figure assets.
+4. Validate all differences, listing approved substitutions as `AUTHORIZED CHANGE`.
+5. Return one authoritative TeX artifact and no independent rewrite.
+
+## Preservation Checker
+
+For a single file, run strict comparison:
+
+```bash
+python3 paper-polisher/scripts/check_preservation.py original.tex candidate.tex
 ```
 
-Do not use dash punctuation anywhere in author-written manuscript prose, including the title, abstract, headings, body, captions, table or figure notes, footnotes, acknowledgments, and appendices. Prohibited forms include Unicode `—`, `–`, `―`, and equivalent TeX prose sequences such as `---` and `--`.
+For ordinary prose additions only:
 
-Choose the replacement from the meaning:
-
-```text
-Dash form: The controller—an uncertainty-aware module—filters unreliable observations.
-Apposition: The controller, an uncertainty-aware module, filters unreliable observations.
-
-Dash form: The analysis yields two findings—the error decreases and convergence becomes more stable.
-Colon: The analysis yields two findings: the error decreases and convergence becomes more stable.
-
-Appositive content clause: The observation that performance degrades under occlusion motivates the confidence gate.
+```bash
+python3 paper-polisher/scripts/check_preservation.py original.tex candidate.tex --allow-additions
 ```
 
-Relative clauses, semicolons, parentheses, conjunctions, and separate sentences are also valid when they express the relation more accurately. Rewrite a prose range with `from ... to ...` or another dash-free construction.
+`--allow-additions` does not permit structural-key, image-asset, math-region, numerical-token, unit, or sign additions, deletions, changes, or reordering. It is not a notation-normalization mode.
 
-Do not confuse dash punctuation with protected or technically meaningful hyphens and minus signs. Keep a single lexical hyphen in established compounds such as `risk-aware`, `real-time`, and `state-of-the-art`; keep mathematical subtraction and signed values such as `$a-b$`, `$-1$`, and `-3.2 dB`; and preserve hyphens inside TeX keys, URLs, DOI strings, filenames, citation keys, and bibliography metadata. Never alter protected content merely to satisfy a surface-style check.
+For a multi-file manuscript, pass both authoritative root TeX files:
 
-## Local Polishing Workflow
-
-1. Identify whether the input is a sentence, paragraph, section, caption, table note, or mixed TeX block.
-2. Identify the local function: background, problem, method, formula explanation, result, discussion, or conclusion.
-3. Preserve all TeX structures, keys, variables, numerical data, and technical facts.
-4. Polish for objective academic English.
-5. Check adjacent sentences and paragraph openings for mechanically repeated sentence architecture.
-6. Replace every prose dash in the provided text with a structure that expresses the same logical relation.
-7. Check terminology consistency.
-8. Check whether any claim became stronger than the source.
-
-## Full-Text Polishing Workflow
-
-1. Identify the core problem, application scenario, technical bottleneck, main method, and main claim from the manuscript.
-2. Build a terminology ledger for methods, modules, datasets, metrics, variables, baselines, and abbreviations.
-3. Build a structural ledger for any newly added or user-approved labels, then carry those exact labels into full-text output.
-4. Polish section by section while preserving source meaning and TeX structures.
-5. Keep cross-section terminology and claim boundaries consistent.
-6. Run a manuscript-wide sentence-architecture audit across adjacent sentences, paragraph openings, repeated result paragraphs, and section transitions. Revise mechanical repetition without forcing lexical variation in technical terms.
-7. Scan all author-written prose, headings, captions, and notes for prohibited dash punctuation and rewrite every occurrence before output.
-8. Run the preservation script when original and polished TeX files are available. Use strict mode for pure polishing, and use `--allow-additions` only when the user intentionally added new manuscript content, labels, references, image assets, or numeric tokens.
-9. Produce the required output mode and review report.
-
-## Review Checklist
-
-Before returning, verify:
-
-- TeX commands, environments, protected keys, variables, and math are unchanged.
-- Newly added labels and references are semantic, convention-compatible, and not placeholders.
-- Captions and prose references do not hard-code display numbers such as `Figure 1`; they use LaTeX-generated numbering through labels and reference commands, with reference-name wording (`Fig.`/`Figure`, `Eq.`/`Equation`, etc.) matched to the journal or manuscript style.
-- Numerical values, units, datasets, baselines, metrics, parameter settings, and reported results are unchanged.
-- Bibliography and citation issues are reported rather than silently modified.
-- No unsupported claims, experiments, guarantees, or deployment value were introduced.
-- Technical terms are consistent.
-- Adjacent sentences, paragraph openings, and repeated section patterns do not reuse the same sentence architecture mechanically.
-- Author-written manuscript prose contains no dash punctuation; protected hyphens, minus signs, identifiers, and bibliography metadata are unchanged.
-- Tone is formal, objective, and restrained.
-- Output format matches the task scope.
-
-## Output Patterns
-
-For short local edits:
-
-```text
-Polished version:
-...
-
-Brief note:
-...
+```bash
+python3 paper-polisher/scripts/check_preservation.py original/main.tex candidate/main.tex --project
 ```
 
-Omit the brief note when nothing needs to be flagged.
+Project mode follows statically reachable `\input`, `\include`, `\subfile`, `\subfileinclude`, `\import`, `\subimport`, `\inputfrom`, `\subinputfrom`, `\includefrom`, and `\subincludefrom` directives from each root and preserves current and previous import-directory context. Missing, dynamic, or cyclic includes fail and must also be recorded as semantic coverage gaps.
 
-For major sections or full manuscripts:
+The automated numerical scan covers only recognized decimal, English textual, contextual Roman, and Unicode numeric representations, plus recognized signs, significance markers, currencies, common units, and unit-like compounds in supported numeric/math/literal/macro anchors, TeX connectors, delimited forms, or explicit cue phrases. This is syntactic coverage, not a global semantic unit lexer. Manually compare every form or context the checker does not recognize, including ambiguous standalone unit-like glyphs. A checker pass never replaces this manual preservation review or the quantity-to-unit semantic audit required above.
+
+For a mapping that applies globally throughout the checked scope, repeat the normalization-only mapping option as needed and quote TeX backslashes:
+
+```bash
+python3 paper-polisher/scripts/check_preservation.py original.tex normalized.tex \
+  --approved-symbol-map 'M=N' \
+  --approved-symbol-map '\mathbf{P}=\mathbf{Q}'
+```
+
+With any `--approved-symbol-map`, non-math prose and every unmapped math token must remain unchanged; numeric, currency, percentage, unit, and sign content is never authorized. The parser rejects unambiguous numeric, currency, percentage, and sign mappings, while ambiguous bare glyphs still require the entity-aware ledger and manual unit review. Do not combine this normalization-only option with `--allow-additions`. The CLI mapping is global within the checked scope, so use the location-aware authorization ledger and an author-approved baseline instead when a glyph has intentional exclusions or unrelated reuse.
+
+Do not concatenate a report or commentary with the TeX input.
+
+Checker success establishes only syntactic source-to-output preservation within the checker's supported constructs. Apply the semantic audits and coverage gate independently.
+
+## Output Examples
+
+Use the status meanings defined once in `SKILL.md`. Do not redefine them locally or emit slash-separated template choices.
+
+Example consistency finding:
 
 ```text
-Markdown version:
-...
+Symbol/notation consistency:
+Coverage: PARTIAL
+Result: ISSUE REPORTED
 
-TeX version:
-...
+SYM-001 | ISSUE REPORTED
+Entity: camera-to-world homogeneous transform
+Locations: sections/method.tex:84; sections/evaluation.tex:31
+Evidence: both definitions have the same direction, dimensions, frame, and downstream role, but use \mathbf{M} and \mathbf{N}
+Suggested canonical choice: unresolved; author selection required
+Action: REPORT ONLY
+```
 
-Review report:
-- TeX preservation: PASS
-- Technical fidelity: PASS
-- Numerical/data preservation: PASS
-- Terminology consistency: PASS
-- Citation and bibliography consistency: PASS / ISSUE REPORTED / NOT PRESENT
-- Sentence-structure variety: PASS
-- Dash-free prose: PASS
-- Objective tone and claim boundaries: PASS
-- Output completeness: PASS
+Example numerical finding:
 
-Compliance note:
-- TeX structures, equations, labels, references, citations, bibliography keys, variables, and original command keys are preserved.
-- Numerical values, units, datasets, baselines, metrics, and reported results are preserved.
-- Terminology has been checked for consistency.
-- Repeated sentence frames and paragraph openings have been revised where they created mechanical prose.
-- Author-written manuscript prose contains no dash punctuation; protected technical identifiers and bibliography metadata remain unchanged.
-- Bibliography-entry issues are reported for review rather than edited automatically.
-- No unsupported technical claims or experimental results have been introduced.
+```text
+Source-internal numerical consistency:
+Coverage: FULL MANUSCRIPT
+Result: ISSUE REPORTED
+
+NUM-001 | ISSUE REPORTED
+Quantity: test-set accuracy under the full-data setting
+Locations: tables/main.tex:22 reports 91.2\%; sections/results.tex:47 reports 92.1\%
+Evidence: same dataset, split, method variant, metric, and aggregation
+Required author action: correct and confirm the source externally, then provide a new baseline
+Action: REPORT ONLY
+```
+
+Example verification without an original:
+
+```text
+Verification inputs:
+- Candidate: available
+- Original: unavailable
+
+Source-to-output TeX/math preservation: NOT ASSESSED
+Technical and claim fidelity: NOT ASSESSED
+Numerical-token/unit/sign preservation: NOT ASSESSED
+Candidate modification: NONE
 ```
